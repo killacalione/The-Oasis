@@ -1,5 +1,19 @@
 # Current work state
 
+## LV1 interaction corrections — 2026-10-26
+
+Owner approved third-person orbit, automatic walk-through portals and a dashboard available outside mouse capture. This remains LV1 visitor work. The coordinator is the only source/document writer; an independent reviewer inspected controls, portal state, accessibility and tests read-only.
+
+Source: isolated `fix/lv1-visitor-controls` worktree based on `ce0edb915efd8e08543412304604fd238682c723`, separate from the original pilot checkout and its running 24-hour synthetic soak. Dependencies, server authority, wire messages, SQLite schema and world coordinate/version contracts are unchanged. The source checkpoint is identified by Git and generated revision metadata, not by relabeling old evidence.
+
+Implemented: camera-relative left/right strafing and matching mouse/arrow yaw; bounded vertical orbit with mouse, arrow and held-button controls; crossing detection against authoritative positions through each portal opening, one pending confirmed travel and exit/re-entry after failed/pending entry; nearby destination hints; capture-driven dashboard hiding, canvas resizing, Escape/focus/input recovery and travel/error feedback exposed in both interaction modes. The existing server still authorizes destinations and commits travel before acknowledging. Portal proximity is a client convenience, not a new server permission boundary.
+
+Verification: Node24.22.1 Foundation check/build, pilot type checking, 18 native/integration tests and 18 expanded browser checks passed locally. Chromium153.0.8010.12 used SwiftShader software rendering at1280×720; its measured median exceeded30FPS, not a physical-GPU certification. Browser checks exercised real pointer capture, vertical look, three camera headings, every portal in both directions, failure/re-entry, denied capture and capture release during server interruption. Primary page/console errors were zero. Generated reports/screenshots remain ignored. Test fixtures are isolated; deliberate persistence failures are distinguished from ordinary five-second checkpoint failures when checking portal retry suppression. Git/CI and the refreshed preview identify the final source revision separately from the initial working-tree test report.
+
+The interactive loopback preview is refreshed only after validation, at its original origin and using its existing data directory after a verified backup. This controlled application-process restart is not a host-reboot test. The ce0edb soak's processes, generated output, evidence and selected source remain untouched; any eventual pass belongs only to that revision. The separate physical-LAN instance is not silently upgraded. No source merge, Pages publication, firewall/VPN/power/startup change or new public application exposure is part of this correction.
+
+Next: close LV1's physical two-computer, actual renderer, host-restart, off-device-backup and continuous-operation gates independently. LV1 stays implemented with acceptance pending. S1/S2 remain planned. The next new capability is one versioned World SDK/project contract with bounded, independently stoppable guest execution, followed by local/browser authoring parity and the Home/customization/save-export journey; accounts/shared services, voice, trusted publishing and worldwide readiness retain their later gates.
+
 ## LV1 — private LAN visitor pilot implementation — 2026-10-26
 
 Owner explicitly approved implementing the scoped plan: simple original 3D, desktop browsers, built-in worlds, 2–5 invited adults, this Windows PC and LAN only. Visitor proof precedes creator tools. **LV1 is implemented; complete pilot acceptance is not yet verified. S1/S2 remain planned.** The [runbook](LAN-PILOT.md) is the operating/acceptance source.

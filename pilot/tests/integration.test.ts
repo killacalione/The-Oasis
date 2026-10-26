@@ -6,11 +6,56 @@ import { createRequire } from 'node:module';
 import { readFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { request as httpRequest } from 'node:http';
 import path from 'node:path';
-import { spawn as spawnLocation, stepMovement, validLocation } from '../shared/worlds.js';
+import { WORLDS, spawn as spawnLocation, stepMovement, validLocation } from '../shared/worlds.js';
+import { groundMovement, PortalCrossings, clampPitch, MIN_PITCH, MAX_PITCH, ORBIT_RADIUS } from '../client/navigation.js';
 import { Store, BoundedLog, validateBackup } from '../server/store.js';
 declare const __TEST_ROOT__: string;
 const helpers = await import(new URL('file:' + __TEST_ROOT__.replaceAll('\\', '/') + '/pilot/scripts/test-helpers.mjs').href);
 const { startHost, freshDirectory, createProfile, join, request, command, until, sleep } = helpers;
+
+test('camera-relative movement keeps speed bounded and pitch stays above ground', () => {
+  for (const yaw of [0, Math.PI / 2, -Math.PI / 2, Math.PI, 50]) {
+    const right = groundMovement(yaw, 0, 1), left = groundMovement(yaw, 0, -1);
+    assert.ok(Math.abs(right.dx + Math.cos(yaw)) < 1e-10);
+    assert.ok(Math.abs(right.dz - Math.sin(yaw)) < 1e-10);
+    assert.ok(Math.abs(right.dx + left.dx) < 1e-10 && Math.abs(right.dz + left.dz) < 1e-10);
+    const diagonal = groundMovement(yaw, 1, 1);
+    assert.ok(Math.hypot(diagonal.dx, diagonal.dz) <= 1 + 1e-10);
+    assert.ok(Math.abs(diagonal.facing) <= Math.PI);
+  }
+  assert.equal(clampPitch(-100), MIN_PITCH); assert.equal(clampPitch(100), MAX_PITCH);
+  assert.ok(1.3 + Math.sin(MIN_PITCH) * ORBIT_RADIUS > 0.3);
+});
+
+test('all portal openings cross once in either direction and reject pillar misses', () => {
+  for (const world of Object.values(WORLDS)) for (const portal of world.portals) for (const sign of [-1, 1]) {
+    const tracker = new PortalCrossings();
+    assert.equal(tracker.observe(world.id, { x: portal.x, z: portal.z + sign * 2 }), undefined);
+    assert.equal(tracker.observe(world.id, { x: portal.x, z: portal.z - sign * 0.1 }), portal.target);
+    assert.equal(tracker.observe(world.id, { x: portal.x, z: portal.z - sign * 0.2 }), undefined);
+    tracker.reset();
+    tracker.observe(world.id, { x: portal.x + 1.6, z: portal.z + sign * 2 });
+    assert.equal(tracker.observe(world.id, { x: portal.x + 1.6, z: portal.z - sign * 2 }), undefined);
+  }
+});
+
+test('portal resume, failed/pending travel and world changes require fresh entry', () => {
+  const tracker = new PortalCrossings();
+  const point = (z: number) => ({ x: -9, z });
+  tracker.observe('hub', point(-9));
+  assert.equal(tracker.observe('hub', point(-9.2)), undefined);
+  tracker.observe('hub', point(-7)); // Exit before rearming.
+  assert.equal(tracker.observe('hub', point(-9.1)), 'island');
+  assert.equal(tracker.observe('hub', point(-8.9)), undefined); // Save failed; no automatic retry.
+  tracker.observe('hub', point(-7));
+  assert.equal(tracker.observe('hub', point(-9.1), false), undefined); // Manual action pending.
+  assert.equal(tracker.observe('hub', point(-8.9)), undefined);
+  tracker.observe('hub', point(-7));
+  assert.equal(tracker.observe('hub', point(-9.1)), 'island');
+  assert.equal(tracker.observe('island', { x: 0, z: -13 }), undefined);
+  tracker.reset();
+  assert.equal(tracker.observe('hub', point(-9.1)), undefined);
+});
 
 test('duplicate shutdown requests both await a complete verified backup', async () => {
   const directory = await freshDirectory('shutdown-test-');

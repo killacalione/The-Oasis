@@ -2,6 +2,7 @@ import { Client, type Room } from '@colyseus/sdk';
 import { COLORS, WORLDS, isWorldId, type WorldId } from '../shared/worlds.js';
 import type { Profile, PilotCommand, MovementInput, SavedMessage } from '../shared/contracts.js';
 import { WorldView, type VisiblePlayer } from './world-view.js';
+import { groundMovement, nearbyPortal, PortalCrossings } from './navigation.js';
 import './app.css';
 declare const __OASIS_REVISION__: string;
 type Configuration = { roomId: string; capacity: number; revision: string };
@@ -11,7 +12,7 @@ const canvas = element<HTMLCanvasElement>('world-canvas');
 const arrival = element<HTMLDialogElement>('arrival');
 const form = element<HTMLFormElement>('arrival-form');
 const notice = element('notice');
-const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-world], [data-direction], #save-button, #return-hub, #leave, #mouse-look')];
+const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-world], [data-direction], [data-look], #save-button, #return-hub, #leave, #mouse-look')];
 const storageKey = 'oasis-lv1-profile-key';
 const colorNames = ['Seaglass', 'Amber', 'Lavender', 'Rose', 'Sky'];
 let token = '';
@@ -31,8 +32,11 @@ let roster = '';
 let view: WorldView | null = null;
 const keys = new Set<string>();
 const directions = new Set<string>();
+const lookDirections = new Set<string>();
+const portals = new PortalCrossings();
+const clearInput = () => { keys.clear(); directions.clear(); lookDirections.clear(); view?.setOrbitInput(0, 0); };
 const pending = new Map<string, { resolve(): void; reject(error: Error): void; timer: ReturnType<typeof setTimeout> }>();
-const announce = (text: string, error = false) => { notice.textContent = text; notice.classList.toggle('error', error); };
+const announce = (text: string, error = false) => { notice.textContent = text; notice.classList.toggle('error', error); element('play-notice').textContent = text; element('play-notice').classList.toggle('error', error); };
 const status = (text: string) => { element('connection-state').textContent = text; element('connection-dot').classList.toggle('online', connected); };
 
 try { view = new WorldView(canvas); }
@@ -43,7 +47,7 @@ function setControls() {
   element<HTMLButtonElement>('reconnect').hidden = connected || !token;
 }
 function showWorld(id: WorldId) {
-  if (world !== id) { view?.load(id); world = id; }
+  if (world !== id) { clearInput(); view?.load(id); world = id; }
   const destination = WORLDS[id];
   element('scene-title').textContent = destination.name; element('scene-subtitle').textContent = destination.subtitle;
   element('world-number').textContent = id === 'hub' ? '01 / THE SHARED HUB' : id === 'island' ? '02 / A DIFFERENT HORIZON' : '03 / A LITTLE PERSPECTIVE';
@@ -72,6 +76,12 @@ function sync() {
     for (const p of players) { const li = document.createElement('li'); const dot = document.createElement('span'); dot.className = 'visitor-dot'; dot.style.backgroundColor = p.color; li.append(dot, document.createTextNode(`${p.name}${p.session === room.sessionId ? ' (you)' : ''}${p.worldId === world ? '' : ' · exploring'}`)); list.append(li); }
   }
   if (own && profile && (Math.abs(own.x - profile.location.x) > 0.02 || Math.abs(own.z - profile.location.z) > 0.02 || Math.abs(own.facing - profile.location.facing) > 0.02)) element('save-state').textContent = 'Exploring · checkpoint pending';
+  if (own && isWorldId(own.worldId)) {
+    const nearby = nearbyPortal(own.worldId, own);
+    element('portal-hint').textContent = nearby ? `Walk through to ${WORLDS[nearby.target].name}` : '';
+    const target = portals.observe(own.worldId, own, connected && !busy && !document.hidden);
+    if (target) void perform('travel', { target });
+  }
 }
 async function api(route: string, method = 'GET', body?: unknown) {
   const response = await fetch(route, { method, headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -95,8 +105,8 @@ function action(type: PilotCommand['type'], fields: Record<string, unknown> = {}
 }
 async function perform(type: PilotCommand['type'], fields: Record<string, unknown> = {}) {
   if (busy) return;
-  busy = true; keys.clear(); directions.clear(); setControls();
-  try { await action(type, fields); announce(type === 'travel' ? `Welcome to ${WORLDS[fields.target as WorldId].name}.` : type === 'appearance' ? 'Your color travels with you.' : 'Your position and appearance are confirmed saved.'); }
+  busy = true; clearInput(); setControls();
+  try { await action(type, fields); if (type === 'travel') portals.reset(); announce(type === 'travel' ? `Welcome to ${WORLDS[fields.target as WorldId].name}.` : type === 'appearance' ? 'Your color travels with you.' : 'Your position and appearance are confirmed saved.'); }
   catch (error) { announce((error as Error).message, true); }
   finally { busy = false; setControls(); }
 }
@@ -120,7 +130,7 @@ async function connect() {
     joined.onError((_code, message) => announce(message || 'The connection reported a problem.', true));
     joined.onLeave(() => {
       if (room !== joined) return;
-      connected = false; room = null; keys.clear(); directions.clear();
+      connected = false; room = null; clearInput(); portals.reset();
       if (document.pointerLockElement === canvas) void document.exitPointerLock();
       for (const item of pending.values()) { clearTimeout(item.timer); item.reject(new Error('Connection lost. Reconnect to recover the last confirmed save.')); } pending.clear();
       status(intentionalLeave ? 'Until next time' : 'Disconnected'); setControls();
@@ -130,7 +140,7 @@ async function connect() {
     if (room !== joined || !joined.connection.isOpen) throw new Error('The connection changed during arrival. Retry to resume your confirmed save.');
     updateProfile(saved.profile);
     if (view) view.yaw = saved.profile.location.facing;
-    connected = true; busy = false; seq = 0;
+    portals.reset(); connected = true; busy = false; seq = 0;
     status('Connected to your host'); setControls(); sync();
     if (arrival.open) arrival.close();
     canvas.focus(); announce(`Welcome, ${saved.profile.name}. Explore, or choose a destination from your dashboard.`);
@@ -171,34 +181,45 @@ element('resume-button').addEventListener('click', () => { void connect(); });
 element('leave').addEventListener('click', () => { intentionalLeave = true; void room?.leave(); });
 element('new-profile').addEventListener('click', () => { token = ''; try { localStorage.removeItem(storageKey); } catch {} element('resume-panel').hidden = true; form.hidden = false; element<HTMLInputElement>('nickname').focus(); });
 element('recover-hub').addEventListener('click', async () => { try { const result = await api('/api/recover-hub', 'POST', { confirm: true }); updateProfile(result.profile); await connect(); } catch (error) { element('arrival-error').textContent = (error as Error).message; } });
-element('mouse-look').addEventListener('click', () => { if (document.pointerLockElement === canvas) void document.exitPointerLock(); else { try { const result = canvas.requestPointerLock(); if (result) void result.catch(() => announce('Mouse capture was unavailable. Use the arrow keys to turn.')); } catch { announce('Use the arrow keys to turn your view.'); } } });
-document.addEventListener('pointerlockchange', () => { element('mouse-look').textContent = document.pointerLockElement === canvas ? 'Release mouse · Escape' : 'Look around with mouse'; if (document.pointerLockElement === canvas) canvas.focus(); });
-document.addEventListener('mousemove', event => { if (document.pointerLockElement === canvas && view) view.yaw -= event.movementX * 0.002; });
-const relevantKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowLeft', 'ArrowRight'];
+const captureUnavailable = () => announce('Mouse capture was unavailable. Use arrow keys or the view controls to look around.');
+element('mouse-look').addEventListener('click', () => { if (document.pointerLockElement === canvas) void document.exitPointerLock(); else { try { const result = canvas.requestPointerLock(); if (result) void result.catch(captureUnavailable); } catch { captureUnavailable(); } } });
+document.addEventListener('pointerlockerror', captureUnavailable);
+document.addEventListener('pointerlockchange', () => {
+  const captured = document.pointerLockElement === canvas;
+  clearInput();
+  element('dashboard').hidden = captured; element('dashboard').inert = captured;
+  document.body.classList.toggle('mouse-mode', captured);
+  element('mouse-look').textContent = 'Look around with mouse';
+  if (captured) canvas.focus(); else if (connected && !arrival.open) element('mouse-look').focus();
+});
+document.addEventListener('mousemove', event => { if (document.pointerLockElement === canvas) view?.look(event.movementX, event.movementY); });
+const relevantKeys = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 window.addEventListener('keydown', event => {
-  if (event.code === 'Escape' && document.pointerLockElement === canvas) { void document.exitPointerLock(); keys.clear(); directions.clear(); return; }
+  if (event.code === 'Escape' && document.pointerLockElement === canvas) { void document.exitPointerLock(); clearInput(); return; }
   if (!connected || busy || arrival.open || (event.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName))) return;
   if (relevantKeys.includes(event.code)) { event.preventDefault(); keys.add(event.code); }
 });
 window.addEventListener('keyup', event => { keys.delete(event.code); });
-window.addEventListener('blur', () => { keys.clear(); directions.clear(); });
-document.addEventListener('visibilitychange', () => { keys.clear(); directions.clear(); });
-for (const button of document.querySelectorAll<HTMLButtonElement>('[data-direction]')) {
-  button.addEventListener('pointerdown', event => { directions.add(button.dataset.direction!); button.setPointerCapture(event.pointerId); });
-  for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(name, () => directions.delete(button.dataset.direction!));
-  button.addEventListener('keydown', event => { if (event.code === 'Space' || event.code === 'Enter') { event.preventDefault(); directions.add(button.dataset.direction!); } });
-  button.addEventListener('keyup', () => directions.delete(button.dataset.direction!)); button.addEventListener('blur', () => directions.delete(button.dataset.direction!));
+window.addEventListener('blur', clearInput);
+document.addEventListener('visibilitychange', clearInput);
+for (const button of document.querySelectorAll<HTMLButtonElement>('[data-direction], [data-look]')) {
+  const held = button.dataset.look ? lookDirections : directions;
+  const direction = button.dataset.look || button.dataset.direction!;
+  button.addEventListener('pointerdown', event => { if (!button.disabled) { held.add(direction); button.setPointerCapture(event.pointerId); } });
+  for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(name, () => held.delete(direction));
+  button.addEventListener('keydown', event => { if ((event.code === 'Space' || event.code === 'Enter') && !button.disabled) { event.preventDefault(); held.add(direction); } });
+  button.addEventListener('keyup', () => held.delete(direction)); button.addEventListener('blur', () => held.delete(direction));
 }
-if (view) view.onFrame = () => { view!.setTurning((keys.has('ArrowLeft') ? 1 : 0) - (keys.has('ArrowRight') ? 1 : 0)); };
+if (view) view.onFrame = () => {
+  const enabled = connected && !busy && !document.hidden && !arrival.open;
+  view!.setOrbitInput(enabled ? Number(keys.has('ArrowRight') || lookDirections.has('right')) - Number(keys.has('ArrowLeft') || lookDirections.has('left')) : 0, enabled ? Number(keys.has('ArrowDown') || lookDirections.has('down')) - Number(keys.has('ArrowUp') || lookDirections.has('up')) : 0);
+};
 setInterval(() => {
   if (!room || !connected) return;
   const yaw = view?.yaw || 0;
   const forward = !busy && !document.hidden ? Number(keys.has('KeyW') || directions.has('forward')) - Number(keys.has('KeyS') || directions.has('back')) : 0;
   const strafe = !busy && !document.hidden ? Number(keys.has('KeyD') || directions.has('right')) - Number(keys.has('KeyA') || directions.has('left')) : 0;
-  const dx = -Math.sin(yaw) * forward + Math.cos(yaw) * strafe;
-  const dz = -Math.cos(yaw) * forward - Math.sin(yaw) * strafe;
-  const length = Math.max(1, Math.hypot(dx, dz));
-  const input: MovementInput = { seq: ++seq, dx: dx / length, dz: dz / length, facing: Math.atan2(Math.sin(yaw), Math.cos(yaw)) };
+  const input: MovementInput = { seq: ++seq, ...groundMovement(yaw, forward, strafe) };
   room.send('move', input);
 }, 50);
 (window as unknown as { __oasisMetrics: () => unknown }).__oasisMetrics = () => ({ ...view?.metrics(), connected, players: element('visitor-count').textContent, world, revision: __OASIS_REVISION__ });

@@ -9,6 +9,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial.js'
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode.js';
 import { WORLDS, type WorldId } from '../shared/worlds.js';
 import type { VisiblePlayer } from '../shared/contracts.js';
+import { DEFAULT_PITCH, ORBIT_RADIUS, clampPitch, wrapYaw } from './navigation.js';
 export type { VisiblePlayer } from '../shared/contracts.js';
 
 export class WorldView {
@@ -20,8 +21,10 @@ export class WorldView {
   private players: VisiblePlayer[] = [];
   private own = '';
   yaw = 0;
+  pitch = DEFAULT_PITCH;
   private reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   private turn = 0;
+  private tilt = 0;
   onFrame?: (dt: number) => void;
   constructor(private canvas: HTMLCanvasElement) {
     this.engine = new Engine(canvas, true, { preserveDrawingBuffer: false, stencil: true, powerPreference: 'high-performance' });
@@ -29,11 +32,13 @@ export class WorldView {
     this.load('hub');
     this.engine.runRenderLoop(() => {
       const dt = Math.min(this.engine.getDeltaTime() / 1000, 0.1);
-      this.yaw = Math.atan2(Math.sin(this.yaw + this.turn * dt * 1.6), Math.cos(this.yaw + this.turn * dt * 1.6));
       this.onFrame?.(dt);
+      this.yaw = wrapYaw(this.yaw + this.turn * dt * 1.6);
+      this.pitch = clampPitch(this.pitch + this.tilt * dt * 1.2);
       this.renderPlayers(dt); this.scene.render();
     });
     window.addEventListener('resize', () => this.engine.resize());
+    new ResizeObserver(() => this.engine.resize()).observe(canvas);
   }
   private material(name: string, color: string, glow = false) {
     const mat = new StandardMaterial(name, this.scene);
@@ -80,7 +85,8 @@ export class WorldView {
     }
   }
   update(players: VisiblePlayer[], own: string) { this.players = players; this.own = own; }
-  setTurning(value: number) { this.turn = value; }
+  setOrbitInput(turn: number, tilt: number) { this.turn = turn; this.tilt = tilt; }
+  look(dx: number, dy: number) { this.yaw = wrapYaw(this.yaw + dx * 0.002); this.pitch = clampPitch(this.pitch + dy * 0.002); }
   private renderPlayers(dt: number) {
     const visible = this.players.filter(player => player.worldId === this.world);
     const sessions = new Set(visible.map(player => player.session));
@@ -99,8 +105,13 @@ export class WorldView {
       }
       const amount = this.reduced.matches ? 1 : Math.min(1, dt * 14);
       avatar.root.position = Vector3.Lerp(avatar.root.position, new Vector3(player.x, player.y, player.z), amount); avatar.root.rotation.y = player.facing;
-      if (player.session === this.own) { const center = avatar.root.position; this.camera.position.set(center.x + Math.sin(this.yaw) * 10, center.y + 6.8, center.z + Math.cos(this.yaw) * 10); this.camera.setTarget(center.add(new Vector3(0, 1.3, 0))); }
+      if (player.session === this.own) {
+        const target = avatar.root.position.add(new Vector3(0, 1.3, 0));
+        const horizontal = Math.cos(this.pitch) * ORBIT_RADIUS;
+        this.camera.position.set(target.x + Math.sin(this.yaw) * horizontal, target.y + Math.sin(this.pitch) * ORBIT_RADIUS, target.z + Math.cos(this.yaw) * horizontal);
+        this.camera.setTarget(target);
+      }
     }
   }
-  metrics() { return { fps: this.engine.getFps(), world: this.world, meshes: this.scene.meshes.length, materials: this.scene.materials.length, avatars: this.avatars.size, engineScenes: this.engine.scenes.length }; }
+  metrics() { return { fps: this.engine.getFps(), world: this.world, meshes: this.scene.meshes.length, materials: this.scene.materials.length, avatars: this.avatars.size, engineScenes: this.engine.scenes.length, yaw: this.yaw, pitch: this.pitch, cameraPosition: this.camera.position.asArray(), cameraRight: this.camera.getDirection(Vector3.Right()).asArray(), position: this.players.find(player => player.session === this.own), renderSize: [this.engine.getRenderWidth(), this.engine.getRenderHeight()], canvasSize: [this.canvas.clientWidth, this.canvas.clientHeight] }; }
 }

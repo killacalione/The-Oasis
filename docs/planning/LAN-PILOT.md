@@ -6,7 +6,7 @@ Authorized by the owner on 2026-10-26: simple original 3D, desktop browsers, 2â€
 
 The Concourse is the first Hub. Tideglass Island and Quiet Orbit are two original, bundled worlds. Each browser renders its view with Babylon.js. One Node/Colyseus process owns a fixed five-client session, movement, appearance, travel and save acknowledgements. It broadcasts state for the three built-in worlds; these worlds have no private-room policy. SQLite persists separate pseudonymous profiles and their last confirmed locations. There are no Homes, real accounts, chat, voice, publishing, imported assets or guest scripts.
 
-The 3D scenery is original code-generated geometry. Decorative scenery has no general physics simulation. Movement is ground-level, five metres/second, bounded to each platform's circular traversable area. Portal buttons are the keyboard-accessible alternative to walking toward a gate. A selected color belongs to the player and follows travel. New profiles begin in the Hub. Returning profiles resume their exact acknowledged world/version/frame/XYZ/facing. Incompatible or corrupt saved locations are retained until the visitor explicitly chooses Hub recovery.
+The 3D scenery is original code-generated geometry. Decorative scenery has no general physics simulation. Movement is ground-level, five metres/second, bounded to each platform's circular traversable area. Crossing a glowing portal opening from either side requests confirmed travel; passing beside its pillars does not. Dashboard destination buttons are the non-spatial alternative. A selected color belongs to the player and follows travel. New profiles begin in the Hub. Returning profiles resume their exact acknowledged world/version/frame/XYZ/facing. Incompatible or corrupt saved locations are retained until the visitor explicitly chooses Hub recovery.
 
 ## Start on Windows
 
@@ -31,8 +31,9 @@ The host invitation is in `.local/lan-pilot/invite.txt`; share it only with the 
 
 ## Controls and saves
 
-- W/A/S/D move; left/right arrow keys turn. Hold the visible direction buttons as an alternative.
-- Mouse look is optional. The visible control and Escape release capture.
+- W/A/S/D move relative to the camera. Left/right arrow keys turn; up/down tilt the third-person orbit. Hold the visible movement/view buttons as an alternative. Pitch is local, bounded above ground and does not change movement speed or saved avatar facing.
+- Mouse look is optional and supports horizontal and vertical motion. Successful capture hides the dashboard and expands the rendered world. Escape or lost capture restores the dashboard and clears held input. Capture denial leaves keyboard/button controls available. The browser may restrict capture on a plain-HTTP LAN origin.
+- A nearby hint names the portal destination. Entry is observed from server-reported positions; the existing server-authorized travel/save operation remains authoritative. Travel consumes one crossing and clears movement. Loading inside an opening or a failed/pending travel requires leaving and crossing again; standing there never repeatedly requests travel. Travel/error feedback stays available during capture. Dashboard destinations and Return to Hub remain available after Escape.
 - The dashboard remains available for world destinations, appearance, Save, Return to Hub and Leave.
 - Movement is simulated at 20 Hz using server time. Invalid/oversized/nonfinite fields, client-supplied coordinates and cross-profile action fields are rejected. Inputs expire after 250 ms, clear after travel and stop being sent while the page is hidden.
 - Travel, appearance changes, manual Save, five-second movement checkpoints and final disconnect save through SQLite transactions. Only committed writes receive a saved revision. A failed write keeps the last confirmed record and reports failure. Crash recovery is limited to that record.

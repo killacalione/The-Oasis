@@ -19,10 +19,11 @@
     </header>
     <main class="experience">
       <section class="viewport" aria-label="World view">
-        <canvas id="world-canvas" tabindex="0" aria-label="3D world. Use W A S D to move, arrow keys to turn, or the movement buttons. Escape releases the mouse."></canvas>
+        <canvas id="world-canvas" tabindex="0" aria-label="3D world. Use W A S D to move, arrow keys to look around, or the dashboard controls. Walk through a portal to travel. Escape releases the mouse and opens the dashboard."></canvas>
         <div class="world-caption" aria-hidden="true"><span id="world-number">01 / THE SHARED HUB</span><strong id="scene-title">The Concourse</strong><span id="scene-subtitle">Every journey starts with a shared place.</span></div>
         <div class="scene-badge"><span class="live-indicator"></span> ORIGINAL WORLD <span id="world-version">1.0</span></div>
-        <div class="view-actions"><button id="mouse-look" type="button" disabled>Look around with mouse</button><span>ESC TO RELEASE</span></div>
+        <div class="play-feedback"><p id="portal-hint"></p><p id="play-notice" role="status" aria-live="polite"></p></div>
+        <div class="view-actions"><button id="mouse-look" type="button" disabled>Look around with mouse</button><span>ESC · DASHBOARD</span></div>
         <p id="graphics-error" class="graphics-error" role="alert" hidden></p>
       </section>
       <aside class="dashboard" id="dashboard" tabindex="-1" aria-label="Oasis dashboard">
@@ -36,9 +37,9 @@
         </nav>
         <section class="people" aria-label="Visitors"><div class="section-label"><span>HERE WITH YOU</span><span id="visitor-count">0 / 5</span></div><ul id="visitor-list"><li class="empty">Your company is on its way.</li></ul></section>
         <section class="you" aria-label="Your avatar"><div class="section-label"><span>YOUR AVATAR</span><span id="nickname-label">A new explorer</span></div><div id="wardrobe" class="swatches" aria-label="Avatar colors"></div></section>
-        <section class="movement" aria-label="Movement controls"><div class="section-label"><span>TAKE A FEW STEPS</span><span>W A S D</span></div><div class="movement-grid"><button data-direction="forward" aria-label="Move forward" disabled>↑</button><button data-direction="left" aria-label="Move left" disabled>←</button><button data-direction="back" aria-label="Move backward" disabled>↓</button><button data-direction="right" aria-label="Move right" disabled>→</button></div><p class="hint">Hold a movement button or use your keyboard. Left / right arrows turn your view.</p></section>
+        <section class="movement" aria-label="Movement controls"><div class="section-label"><span>TAKE A FEW STEPS</span><span>W A S D</span></div><div class="movement-grid"><button data-direction="forward" aria-label="Move forward" disabled>↑</button><button data-direction="left" aria-label="Move left" disabled>←</button><button data-direction="back" aria-label="Move backward" disabled>↓</button><button data-direction="right" aria-label="Move right" disabled>→</button></div><div class="section-label view-label"><span>LOOK AROUND</span><span>ARROW KEYS</span></div><div class="movement-grid"><button data-look="left" aria-label="Look left" disabled>←</button><button data-look="up" aria-label="Look up" disabled>↑</button><button data-look="down" aria-label="Look down" disabled>↓</button><button data-look="right" aria-label="Look right" disabled>→</button></div><p class="hint">Hold a button or use your keyboard. Walk through a glowing portal to travel. Escape opens the dashboard during mouse look.</p></section>
         <div class="save-card"><span class="save-indicator" aria-hidden="true">✓</span><div><strong id="save-state">Your journey, remembered.</strong><small id="save-detail">Confirmed saves appear here.</small></div><button id="save-button" type="button" disabled>Save</button></div>
-        <p id="notice" class="notice" role="status" aria-live="polite">Choose an avatar to enter the Hub.</p>
+        <p id="notice" class="notice">Choose an avatar to enter the Hub.</p>
         <p id="session-warning" class="notice error" role="alert" hidden></p>
         <div class="session-actions"><button id="return-hub" type="button" disabled>Return to Hub</button><button id="reconnect" type="button" hidden>Reconnect</button><button id="leave" type="button" disabled>Leave</button></div>
         <footer class="panel-footer"><span>EXPERIMENTAL · INVITED ADULTS ONLY</span><span id="build-label"></span></footer>
