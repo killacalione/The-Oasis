@@ -4,6 +4,10 @@
 
 Owner intent comes from the initial vision and interview rounds one/two/three/four/five/six/seven on 2026-10-14. Recorded owner answers are requirements; implementation and safety workflow choices remain proposals. Preserve these IDs.
 
+## LV1 authorization, 2026-10-26
+
+D-044: the owner approved implementing a separate private **LAN visitor pilot** after F1: a shared 3D Hub, desktop browsers, this Windows PC, 2–5 invited adults, original built-in worlds and simple 3D visuals. Visitor movement/appearance/travel and acknowledged durable saves precede creator tools. This deliberately advances a bounded shared visitor slice without completing or removing S1 dual authoring/guest containment or S2 real-account/Home/access requirements. Default binding is loopback; only an explicitly selected private LAN interface may be enabled. Public hosting, firewall/VPN/power/startup changes, voice, publishing and child-data collection are not incidental implementation steps. See [LV1](LAN-PILOT.md) for exact implementation and acceptance boundaries.
+
 | ID | Decision | State | Consequence / next evidence |
 |---|---|---|---|
 | D-001 | Long-running extensible online hub | Requirement | Versioned worlds/interfaces and phased planning |

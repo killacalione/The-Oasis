@@ -1,6 +1,6 @@
 # Product requirements
 
-Updated 2026-10-15. **Requirement** records owner intent; **Verified** requires dated implementation evidence; **Proposed** is a candidate; **Unknown** is unresolved. The current work is the F1 product/contributor foundation. The application is not implemented.
+Updated 2026-10-26. **Requirement** records owner intent; **Verified** requires dated implementation evidence; **Proposed** is a candidate; **Unknown** is unresolved. F1 is verified. A bounded private LV1 visitor pilot is implemented; its remaining acceptance gates and full S1/S2 scope are separate.
 
 ## Product intent
 
@@ -14,17 +14,18 @@ Updated 2026-10-15. **Requirement** records owner intent; **Verified** requires 
 - **Avatar ownership:** the player controls avatar and outfit. World code cannot silently substitute, strip or overwrite the selection. Block entry or ask the player explicitly if a world cannot support the chosen appearance.
 - **Separation:** account identity/appearance, entitlements, arrival preference, confirmed location, personal Home, immutable world source, validated per-player world state and authorization are distinct records/boundaries. Guest scripts cannot mutate account records or grant access.
 
-These are product requirements, not current UI, login, persistence or authorization behavior. The S1 local profile is not a real account.
+These are whole-product requirements. LV1 implements only test-profile arrival, colors, built-in-world travel and confirmed server saves; it has no real accounts or Homes. Its exact limits and acceptance are in the [LAN pilot](../planning/LAN-PILOT.md). The S1 local profile is not a real account.
 
 ## Ordered delivery
 
 1. **F0 — Existing foundation, verified:** consolidated source/provenance, public GitHub collaboration, contributor rules, protected PR checks and a curated static progress site.
-2. **F1 — The Oasis definition, current:** experience blueprint, append-only owner decisions, traceable phase gates, agent/contributor reading paths, repository/Pages identity migration and tested status consistency.
-3. **S1 — Internal local proof, planned:** one versioned World SDK contract and both coding paths; isolated interpreted guest scripts; two original worlds; local Hub/dashboard/avatar/Home demonstrations; personal choices and visibility request; exact location save/resume; recovery, export/import and meaningful hostile/resource/UI checks. No online accounts/grants/services.
-4. **S2 — Accounts and shared core, planned:** stage secure accounts/profile/location/Home ownership and eligible discovery, then authoritative shared Hub/rooms/text with changed-client permission tests.
-5. **S3 — Proximity and party voice, planned:** authorized routes, lifecycle, recipient denial and resource evidence.
-6. **S4 — Trusted publishing, planned:** validated compatible worlds, current grants, direct release, rollback, quarantine and revocation.
-7. **S5 — Public readiness, blocked on evidence:** the intended worldwide, all-age operation requires actual age/guardian, region, privacy, accessibility, rights, staffed operations and sustainable funding proof.
+2. **F1 — The Oasis definition, verified:** experience blueprint, append-only owner decisions, traceable phase gates, agent/contributor reading paths, repository/Pages identity migration and tested status consistency.
+3. **LV1 — Private LAN visitor pilot, implemented:** the separately authorized desktop visitor slice comes before the complete S1 creator proof; physical/extended-operation verification remains required.
+4. **S1 — Internal local proof, planned:** one versioned World SDK contract and both coding paths; isolated interpreted guest scripts; two original worlds; local Hub/dashboard/avatar/Home demonstrations; personal choices and visibility request; exact location save/resume; recovery, export/import and meaningful hostile/resource/UI checks. No online accounts/grants/services.
+5. **S2 — Accounts and shared core, planned:** stage secure accounts/profile/location/Home ownership and eligible discovery, then authoritative shared Hub/rooms/text with changed-client permission tests.
+6. **S3 — Proximity and party voice, planned:** authorized routes, lifecycle, recipient denial and resource evidence.
+7. **S4 — Trusted publishing, planned:** validated compatible worlds, current grants, direct release, rollback, quarantine and revocation.
+8. **S5 — Public readiness, blocked on evidence:** the intended worldwide, all-age operation requires actual age/guardian, region, privacy, accessibility, rights, staffed operations and sustainable funding proof.
 
 The [roadmap](../planning/ROADMAP.md) owns dependencies, stable task IDs and exit criteria. The [requirements register](../planning/REQUIREMENTS.md) preserves R-001–R-023 and records the dated scope correction without rewriting history; [DECISIONS](../planning/DECISIONS.md) is append-only. The [legacy crosswalk](../provenance/LEGACY-CROSSWALK.md) preserves older IDs.
 

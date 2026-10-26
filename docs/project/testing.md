@@ -1,5 +1,11 @@
 # Testing and evidence
 
+## LV1 visitor pilot
+
+Run Node24 `npm run pilot:check`, `npm run pilot:test` and `npm run pilot:browser` separately from Foundation checks. Native tests exercise real HTTP/WebSocket clients, fixed global five-seat capacity, invitation/origin/ownership denials, movement/replay/duplicate handling, correlated write failures, acknowledged exact restart recovery, malformed saved-state recovery, live backup and separate restore. Browser tests use isolated profiles, real 3D rendering, keyboard/pointer controls, reload/reconnect, repeated travel/disposal, storage failures and measured FPS. Screenshots/report stay in ignored artifacts. A passing local test is not remote CI evidence.
+
+The [LAN pilot runbook](../planning/LAN-PILOT.md) retains two physical computers, selected-interface reachability, host-reboot conditions, representative desktop/browser rendering and full 24-hour operation as independent gates. Synthetic SDK soak clients are loopback server evidence, not physical LAN or five-device rendering coverage. Actual command/environment/revision and any gaps are recorded in WORK-STATE and VERIFY. S1/S2 stay planned.
+
 Foundation checks: public data shape, permitted evidence states, tracked/public file boundaries, recognizable secret/local-path patterns, local Markdown links, seven TOML/card mirrors, source JavaScript syntax, all five generated routes and their local links, theme/motion controls and the exact curated site output. Run `npm run check` then `npm run build`; browser review checks desktop/mobile reflow and Home viewport fit, navigation across all routes, theme carry-over, keyboard focus/skip link, reduced-motion behavior, visible motion control, console/page errors and release metadata. Live Pages deployment and local tests are separate evidence gates. If the available browser prefers reduced motion, report that the pause/resume interaction itself could not be exercised in that context.
 
 Original input archive bytes/hashes and merge classification are recorded in [merge evidence](../provenance/MERGE-REPORT.md). The earlier prototype's structural test and REA replay cover its old one-world navigation only; no S1 or application safety pass follows.

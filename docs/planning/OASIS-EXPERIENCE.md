@@ -33,7 +33,7 @@ The dashboard remains readily available from the Hub, a world or Home. Its core 
 - **Preferences:** select future arrival behavior and accessibility choices.
 - **Return:** leave a broken or incompatible destination through a persistent, predictable route.
 
-No real Hub, dashboard, world directory, wardrobe, editor, account or online destination exists today. Site pages explain the project; they are not a launch dashboard or playable scene.
+The public site remains informational. The separately authorized [LV1 private LAN pilot](LAN-PILOT.md) now implements a bounded Hub/dashboard, test-profile colors, two built-in worlds and confirmed saves. Full accounts, Homes, directory, wardrobe/entitlements and creator tools remain future scope. LV1 does not complete this whole-product blueprint.
 
 ## Returning arrival — requirement
 

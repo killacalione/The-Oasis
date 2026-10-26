@@ -1,5 +1,11 @@
 # Foundation verification
 
+## LV1 local implementation evidence — 2026-10-26
+
+See the [LAN pilot runbook](docs/planning/LAN-PILOT.md) and [current ledger](docs/planning/WORK-STATE.md). On portable Node24.22.1 the information-site check/build, TypeScript and whitespace checks passed. Fifteen real native/integration tests and twelve Chromium153.0.8010.12 browser checks passed. They cover five-seat authority, modified-client denials, durable exact resume, failed writes, crash/restart, consistent backup/restore, lifecycle cleanup, input/mouse controls and interrupted-arrival recovery. A 1280×720 steady five-sample rendering median measured59.71FPS with SwiftShader software rendering. The primary browser reported zero page/console errors. These are local, revision-stamped test artifacts, not physical GPU/device or public-service certification.
+
+Home's information-site viewport fit and portal visibility were replayed at1280×720,1440×900 and375×812; all five routes returned200. The original three-theme main baseline remains separate from the unmerged nine-theme feature branch. A0.003-hour synthetic run checked only the soak harness. Two physical computers, selected-LAN reachability, host-reboot conditions, off-device backups and a full24-hour result remain unverified. LV1 remains implemented and S1/S2 planned. Required PR checks, human merge and any information-site publication retain their own evidence gates; the pilot is never a Pages artifact.
+
 The foundation separates implemented configuration, locally passing checks and observed remote deployment. Current commands:
 
 ```sh

@@ -4,7 +4,17 @@
 
 ## What exists today
 
-The **F1 product definition and community foundation is verified**. This public repository contains the product blueprint, phased requirements and proposals, community contribution process, and a static pixel-art progress site. It does not provide real sign-in, a playable Hub or Home, a wardrobe, user-made world hosting, chat, voice or any other online product service. S1 application implementation has not started. The site’s progress data and [work ledger](docs/planning/WORK-STATE.md) distinguish implemented source, verified checks, planned work and remaining gaps.
+The **F1 product definition and community foundation is verified**. A separate **LV1 private LAN visitor pilot is implemented**: a desktop-browser 3D Hub, two original worlds, shared presence for up to five invited adult testers, avatar colors, portal travel and acknowledged SQLite saves. It is not a public application service. Real accounts, Homes, creator tools, guest code, chat, voice and publishing remain unimplemented; S1 and S2 remain planned. The [pilot runbook](docs/planning/LAN-PILOT.md) and [work ledger](docs/planning/WORK-STATE.md) separate source, actual checks and the remaining physical/extended-operation gates.
+
+## Try the private visitor pilot
+
+On Windows, from this repository root:
+
+```powershell
+.\pilot\Start-Oasis.cmd
+```
+
+Open `http://127.0.0.1:2567`. The launcher uses an isolated Node 24.22.1 runtime and pinned dependencies without replacing system Node. Choose an avatar and enter the Hub. Follow the [runbook](docs/planning/LAN-PILOT.md) for explicit LAN binding, host invitations, controls, tests, restart, backup and separate restore. No firewall, VPN, power, router or Windows startup setting is changed by the launcher. Two physical computers and a full 24-hour run remain separate acceptance evidence.
 
 ## Start here
 
@@ -32,7 +42,7 @@ Use the public [Discussions](https://github.com/killacalione/The-Oasis/discussio
 
 ## Product boundaries
 
-The intended first public release serves eligible children, teens and adults and includes public world discovery, text/proximity/party voice and trusted direct publishing. These are requirements under research, not live services or launch-readiness claims. S1 is an internal local proof with no real accounts, online publishing, payments, recording or child-data collection. The exact stack and online providers remain unselected until evidence supports a scoped decision.
+The intended first public release serves eligible children, teens and adults and includes public world discovery, text/proximity/party voice and trusted direct publishing. These are requirements under research, not live services or launch-readiness claims. LV1 is only the authorized invited-adult LAN visitor slice. S1 remains an unfinished internal creator/local proof with no real accounts, online publishing, payments, recording or child-data collection. LV1 pins its own tested stack; public-service providers and production architecture remain unselected.
 
 ## Provenance and license
 

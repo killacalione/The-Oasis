@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24'
+          node-version: '24.22.1'
       - run: npm run check
       - run: npm run build
       - name: Configure Pages
@@ -36,10 +36,28 @@ jobs:
         with:
           path: dist
 
+  pilot:
+    name: LAN pilot checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-fund
+      - run: npm run pilot:check
+      - run: npm run pilot:test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run pilot:browser
+
   deploy:
     name: Publish progress
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: validate
+    needs: [validate, pilot]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

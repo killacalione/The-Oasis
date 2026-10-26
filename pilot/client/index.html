@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="The Oasis private LAN visitor pilot. A shared place to begin, explore, and return.">
+  <title>The Oasis · A place to begin</title>
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#dashboard">Skip to world controls</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="The Oasis home"><span class="brand-mark" aria-hidden="true">◇</span><span>THE OASIS<small>A PLACE TO BEGIN</small></span></a>
+      <span class="pilot-label">PRIVATE LAN PILOT <span>01</span></span>
+      <div class="connection"><span id="connection-dot" class="status-dot"></span><span id="connection-state" role="status">Connecting to your host</span></div>
+    </header>
+    <main class="experience">
+      <section class="viewport" aria-label="World view">
+        <canvas id="world-canvas" tabindex="0" aria-label="3D world. Use W A S D to move, arrow keys to turn, or the movement buttons. Escape releases the mouse."></canvas>
+        <div class="world-caption" aria-hidden="true"><span id="world-number">01 / THE SHARED HUB</span><strong id="scene-title">The Concourse</strong><span id="scene-subtitle">Every journey starts with a shared place.</span></div>
+        <div class="scene-badge"><span class="live-indicator"></span> ORIGINAL WORLD <span id="world-version">1.0</span></div>
+        <div class="view-actions"><button id="mouse-look" type="button" disabled>Look around with mouse</button><span>ESC TO RELEASE</span></div>
+        <p id="graphics-error" class="graphics-error" role="alert" hidden></p>
+      </section>
+      <aside class="dashboard" id="dashboard" tabindex="-1" aria-label="Oasis dashboard">
+        <div class="panel-heading"><span class="eyebrow">YOUR NEXT CHAPTER</span><span class="tiny-orbit" aria-hidden="true">✦</span></div>
+        <h1>Where to?</h1>
+        <p class="muted intro">A familiar place.<br>A different horizon.</p>
+        <nav id="destinations" aria-label="World destinations">
+          <button class="destination active" data-world="hub" type="button" disabled><span class="destination-icon mint" aria-hidden="true">◇</span><span><strong>The Concourse</strong><small>Meet at the beginning</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+          <button class="destination" data-world="island" type="button" disabled><span class="destination-icon sand" aria-hidden="true">≈</span><span><strong>Tideglass Island</strong><small>Follow the water</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+          <button class="destination" data-world="observatory" type="button" disabled><span class="destination-icon lilac" aria-hidden="true">✦</span><span><strong>Quiet Orbit</strong><small>Find a little perspective</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+        </nav>
+        <section class="people" aria-label="Visitors"><div class="section-label"><span>HERE WITH YOU</span><span id="visitor-count">0 / 5</span></div><ul id="visitor-list"><li class="empty">Your company is on its way.</li></ul></section>
+        <section class="you" aria-label="Your avatar"><div class="section-label"><span>YOUR AVATAR</span><span id="nickname-label">A new explorer</span></div><div id="wardrobe" class="swatches" aria-label="Avatar colors"></div></section>
+        <section class="movement" aria-label="Movement controls"><div class="section-label"><span>TAKE A FEW STEPS</span><span>W A S D</span></div><div class="movement-grid"><button data-direction="forward" aria-label="Move forward" disabled>↑</button><button data-direction="left" aria-label="Move left" disabled>←</button><button data-direction="back" aria-label="Move backward" disabled>↓</button><button data-direction="right" aria-label="Move right" disabled>→</button></div><p class="hint">Hold a movement button or use your keyboard. Left / right arrows turn your view.</p></section>
+        <div class="save-card"><span class="save-indicator" aria-hidden="true">✓</span><div><strong id="save-state">Your journey, remembered.</strong><small id="save-detail">Confirmed saves appear here.</small></div><button id="save-button" type="button" disabled>Save</button></div>
+        <p id="notice" class="notice" role="status" aria-live="polite">Choose an avatar to enter the Hub.</p>
+        <p id="session-warning" class="notice error" role="alert" hidden></p>
+        <div class="session-actions"><button id="return-hub" type="button" disabled>Return to Hub</button><button id="reconnect" type="button" hidden>Reconnect</button><button id="leave" type="button" disabled>Leave</button></div>
+        <footer class="panel-footer"><span>EXPERIMENTAL · INVITED ADULTS ONLY</span><span id="build-label"></span></footer>
+      </aside>
+    </main>
+  </div>
+  <dialog id="arrival" aria-labelledby="arrival-title">
+    <div class="arrival-decoration" aria-hidden="true"><span>◇</span><i></i><i></i><i></i></div>
+    <span class="eyebrow">THIS IS YOUR STARTING POINT</span>
+    <h2 id="arrival-title">A world feels different<br>when you're in it.</h2>
+    <p class="muted">Choose a nickname and a color. Your first stop is the shared Hub.</p>
+    <form id="arrival-form">
+      <label for="nickname">Your nickname</label><input id="nickname" name="nickname" required minlength="2" maxlength="20" pattern="[A-Za-z0-9 _\-]{2,20}" autocomplete="off" placeholder="Explorer">
+      <fieldset><legend>Your color</legend><div id="arrival-colors" class="swatches"></div></fieldset>
+      <label for="invite">Host invitation</label><input id="invite" name="invite" type="password" required autocomplete="off" maxlength="128" placeholder="Ask your host for the code">
+      <p id="arrival-error" class="form-error" role="alert"></p>
+      <button class="primary" id="enter-button" type="submit">Enter the Oasis <span aria-hidden="true">↗</span></button>
+    </form>
+    <div id="resume-panel" hidden><p id="resume-name"></p><button id="resume-button" class="primary" type="button">Resume your journey <span aria-hidden="true">↗</span></button><button id="recover-hub" type="button" hidden>Recover explicitly to the Hub</button><button id="new-profile" class="text-button" type="button">Use a different test profile</button></div>
+    <p class="privacy-note">A private prototype for 2–5 invited adults. This browser keeps a test-profile key. Clearing it removes your ability to resume that profile here.</p>
+  </dialog>
+  <noscript>This prototype needs JavaScript. The project information site remains available separately.</noscript>
+</body>
+</html>
