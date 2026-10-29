@@ -1,7 +1,7 @@
 {
   "home": {
     "intro": "The Oasis is planned as a persistent community hub: start in a central Hub, discover worlds others have made, personalize an avatar and Home, or create worlds of your own. Visitors won't need to code.",
-    "now": "The public product foundation is verified. Sign-in, playable spaces and online services are not live."
+    "now": "The public foundation is verified. A separate private LAN visitor pilot is implemented; no public application service is available."
   },
   "project": {
     "pillars": [
@@ -9,15 +9,15 @@
       {"title": "Make it yours", "detail": "A player will control their avatar and outfit, open a personal Home, and carry their choices between compatible worlds."},
       {"title": "Explore and create", "detail": "Find worlds made by the community or build one with code. Visitors can explore without programming; creator tools are one path inside the larger Oasis."}
     ],
-    "next": "F1 is verified. Application implementation has not started; S1 remains planned until the owner authorizes a separate scope. The proposed local proof covers a Hub/dashboard, player-owned appearance, optional Home, two original worlds, exact confirmed-location resume, recoverable saves, and an independently stoppable interpreted runtime with bounded host commands and hostile-case tests."
+    "next": "F1 is verified. LV1 implements a private desktop-browser visitor slice with a shared Hub, two original worlds, player-owned colors, portal travel and confirmed saves. Physical LAN and 24-hour checks remain separate gates. S1 creator tools and S2 accounts remain planned."
   },
   "progress": {
-    "intro": "The F1 product foundation is verified in public. The application has not started. Here is the completed foundation work with evidence you can inspect."
+    "intro": "The public foundation is verified. A private LAN visitor pilot is implemented, with its actual checks and remaining gates recorded separately. No public application service is available."
   },
   "roadmap": {
-    "intro": "The Oasis has a broad journey: establish a clear product foundation, prove the local experience, then earn each online capability with its own evidence. No dates or percentages are promised."
+    "intro": "The Oasis has a broad journey: establish its foundation, prove a small LAN visitor loop, complete creator tools, then earn each public online capability with its own evidence. No dates or percentages are promised."
   },
   "community": {
-    "intro": "The Oasis is being shaped in public, one careful step at a time. You can help with research, accessibility, architecture or documentation before a playable application exists."
+    "intro": "The Oasis is being shaped in public, one careful step at a time. Help review research, accessibility, architecture, documentation and the bounded private visitor pilot."
   }
 }

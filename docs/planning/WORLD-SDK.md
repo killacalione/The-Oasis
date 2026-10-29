@@ -59,3 +59,9 @@ Exploration, personalization and portals are selected (D-030). Proposed SDK lets
 ## Round-six visibility authority
 
 The space owner selects visibility through trusted creation/settings UI, not arbitrary guest code. S1 stores a requested preference only. Online server validates owner/space/action/current policy; a public mode does not grant editing, trusted publication, another cohort or media access. Imported project data cannot supply ownership/invite credentials. See [space access](SPACE-ACCESS.md).
+
+## Continuous presentation requirement — R-027 / D-044
+
+Future host lifecycle separates preparation, readiness, authoritative commit, presentation and retirement. Prepare only permitted destination versions/assets while the source remains playable. Scene/GPU readiness and server admission are separate checks; neither grants authorization. Delay or cancel preparation without discarding the source, mutating its confirmed save or presenting a fullscreen loading page. After durable travel commits, interruption must reconcile to that destination; do not overwrite it with an older source record.
+
+Keep active/staged worlds and cache/queue/asset budgets bounded. Start with one source and one staged neighbor; cancel obsolete work and prove repeated-travel disposal. Validate cold/warm assets, unavailable targets, revocation, denied delivery, cancellation, post-commit lost responses, first-frame latency, frame-time spikes and peak memory. These are future SDK/runtime acceptance obligations, not implemented general creator support. The [workshop](../learning/README.md) explains LV1's bundled procedural shortcut and the later lifecycle.

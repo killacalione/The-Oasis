@@ -2,7 +2,13 @@
 
 ## Current foundation site
 
-There is no application database, account system or visitor submission flow. Public project status is versioned JSON in Git. The static information site does not collect identity, Home, world or behavioral records and has no analytics/tracking integration. It uses `sessionStorage` only to carry the visitor’s selected visual theme and motion preference across site routes in the current browser session. GitHub’s hosting request processing is separate from product data behavior.
+The information site has no application database, account system or visitor submission flow. Public project status is versioned JSON in Git. The static information site does not collect identity, Home, world or behavioral records and has no analytics/tracking integration. It uses `sessionStorage` only to carry the visitor’s selected visual theme and motion preference across site routes in the current browser session. GitHub’s hosting request processing is separate from product data behavior.
+
+## LV1 private test data
+
+The [LAN pilot](../planning/LAN-PILOT.md) uses a schema-versioned SQLite database in ignored `.local/lan-pilot/`. Its bounded profiles contain an ID, random-key hash, nickname, chosen color, exact versioned location, save revision and timestamp. Keys remain in their browser's local storage; a key is a limited prototype session credential, not real identity. Server-issued identity selects records; client-provided owner IDs cannot authorize writes. Optimistic revisions and FULL/WAL transactions protect confirmed saves. Live movement is separate from the last acknowledged database record. Malformed/unavailable saved locations remain unchanged until explicit Hub recovery.
+
+Online backup and separate-directory restore are provided; restore never overwrites existing state. Daily/shutdown snapshots and rotated logs are private and excluded from publication. Backups inherit profile-key hashes and must stay private. Lost browser keys have no account-recovery feature. Off-device backup coverage remains unverified. This pilot schema is not an adopted public account or Home database.
 
 ## S1 local proof
 

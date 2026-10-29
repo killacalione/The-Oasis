@@ -1,0 +1,10 @@
+import './build.mjs';
+import { build } from 'esbuild';
+import { execFileSync } from 'node:child_process';
+import { mkdir } from 'node:fs/promises';
+import path from 'node:path';
+import { root } from './test-helpers.mjs';
+const output = path.join(root, '.local/pilot-test/integration.test.mjs');
+await mkdir(path.dirname(output), { recursive: true });
+await build({ entryPoints: [path.join(root, 'pilot/tests/integration.test.ts')], outfile: output, bundle: true, packages: 'external', platform: 'node', format: 'esm', target: 'node24', define: { __TEST_ROOT__: JSON.stringify(root) } });
+execFileSync(process.execPath, ['--test', '--test-concurrency=1', output], { cwd: root, stdio: 'inherit' });

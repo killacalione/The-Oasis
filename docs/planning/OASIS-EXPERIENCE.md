@@ -33,7 +33,13 @@ The dashboard remains readily available from the Hub, a world or Home. Its core 
 - **Preferences:** select future arrival behavior and accessibility choices.
 - **Return:** leave a broken or incompatible destination through a persistent, predictable route.
 
-No real Hub, dashboard, world directory, wardrobe, editor, account or online destination exists today. Site pages explain the project; they are not a launch dashboard or playable scene.
+The public site remains informational. The separately authorized [LV1 private LAN pilot](LAN-PILOT.md) now implements a bounded Hub/dashboard, test-profile colors, two built-in worlds and confirmed saves. Full accounts, Homes, directory, wardrobe/entitlements and creator tools remain future scope. LV1 does not complete this whole-product blueprint.
+
+## Continuous world travel — requirement
+
+Owner-selected R-027/D-044, 2026-10-26: keep the current world playable while an authorized destination prepares. Enable crossing when the destination is ready, without replacing the usable world view with a blocking loading screen. Give nonblocking, keyboard/screen-reader-accessible readiness and failure feedback. Preparation is not permission to reveal protected content or enter a world. Keep active/staged resources bounded.
+
+Before authoritative commit, failure/cancellation preserves the source and its confirmed location. After commit, reconcile the actual confirmed destination rather than silently rolling the save back. Measure preparation, first usable frame, frame-time spikes, peak memory and repeated-travel disposal. LV1's tiny bundled procedural scene replacements motivate this rule but do not implement general staging, streaming or cross-server travel.
 
 ## Returning arrival — requirement
 

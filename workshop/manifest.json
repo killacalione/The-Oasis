@@ -1,0 +1,90 @@
+[
+  {
+    "lesson": 1,
+    "title": "Browser events and data",
+    "files": [
+      "src/client/app.js",
+      "src/client/index.html",
+      "src/client/player.js",
+      "src/client/style.css",
+      "tests/basics.test.mjs"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 2,
+    "title": "TypeScript, contracts and movement math",
+    "files": [
+      "src/client/app.ts",
+      "src/shared/contracts.ts",
+      "src/shared/worlds.ts",
+      "tests/movement.test.ts"
+    ],
+    "remove": [
+      "src/client/app.js"
+    ]
+  },
+  {
+    "lesson": 3,
+    "title": "A procedural 3D scene",
+    "files": [
+      "src/client/app.ts",
+      "src/client/index.html",
+      "src/client/style.css",
+      "src/client/view.ts"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 4,
+    "title": "Local movement, orbit and two worlds",
+    "files": [
+      "src/client/app.ts",
+      "src/client/input.ts"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 5,
+    "title": "HTTP profiles and SQLite",
+    "files": [
+      "src/client/app.ts",
+      "src/client/profiles.ts",
+      "src/server/http.ts",
+      "src/server/index.ts",
+      "src/server/store.ts",
+      "tests/store.test.ts"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 6,
+    "title": "Authoritative multiplayer",
+    "files": [
+      "src/client/app.ts",
+      "src/server/index.ts",
+      "src/server/room.ts",
+      "tests/network.test.ts"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 7,
+    "title": "Confirmed saves and portal travel",
+    "files": [
+      "src/client/app.ts",
+      "src/client/portals.ts",
+      "src/server/room.ts",
+      "tests/travel.test.ts"
+    ],
+    "remove": []
+  },
+  {
+    "lesson": 8,
+    "title": "Automated verification",
+    "files": [
+      "scripts/browser.mjs"
+    ],
+    "remove": []
+  }
+]

@@ -1,20 +1,22 @@
 {
   "schemaVersion": 1,
   "project": "The Oasis",
-  "updated": "2026-10-16",
-  "stage": "F1 — The Oasis foundation",
-  "summary": "The Oasis is planned as a persistent community hub: arrive in a central Hub, find worlds made by others, personalize a player-owned avatar and Home, or create a world. The public product foundation is verified; the product itself is not live and application work has not started.",
+  "updated": "2026-10-26",
+  "stage": "LV1 — Private LAN visitor pilot",
+  "summary": "The Oasis is planned as a persistent community hub: arrive in a central Hub, visit worlds, personalize a player-owned avatar and Home, or create a world. The public foundation is verified. A separate private LAN visitor pilot is implemented; no public application service is available.",
   "repository": "https://github.com/killacalione/The-Oasis",
   "currentWork": [
-    {"title": "One portable Oasis experience blueprint", "state": "verified", "detail": "Hub-first arrival, returning choices, player-owned avatar, Home, discovery, creation, exact resume and explicit recovery are recorded as requirements and proposals; application behavior has not started.", "evidence": "docs/planning/OASIS-EXPERIENCE.md"},
+    {"title": "Private LAN visitor pilot", "state": "implemented", "detail": "A desktop-browser Hub, two original worlds, shared presence, player colors, authoritative travel, confirmed SQLite saves and recovery tools are implemented. Physical LAN and extended operation remain separate acceptance gates.", "evidence": "docs/planning/LAN-PILOT.md"},
+    {"title": "One portable Oasis experience blueprint", "state": "verified", "detail": "The larger Hub, player-owned avatar, Home, discovery, creation and recovery requirements remain recorded; LV1 implements only a bounded visitor slice.", "evidence": "docs/planning/OASIS-EXPERIENCE.md"},
     {"title": "A traceable phased plan", "state": "verified", "detail": "F0–F1 and S1–S5 have dependencies, stable task IDs, acceptance gates and explicit unknowns; no dates or percentages are invented.", "evidence": "docs/planning/ROADMAP.md"},
     {"title": "A place to contribute", "state": "verified", "detail": "Public source, contribution guidance, governance, conduct, Discussions and private security reporting are available.", "evidence": "CONTRIBUTING.md"},
     {"title": "The Oasis project identity", "state": "verified", "detail": "The public repository rename, local origin, protected main, and deployed /The-Oasis/ site revision are verified.", "evidence": "docs/planning/WORK-STATE.md"},
-    {"title": "Progress that follows the source", "state": "verified", "detail": "The five-page status site, required main check, Pages deployment, live release revision, and deployed output are verified together.", "evidence": "docs/planning/WORK-STATE.md"}
+    {"title": "Progress that follows the source", "state": "verified", "detail": "F1's five-page information site and matching main release were verified together. LV1 source and local checks do not imply that its branch or private application is deployed publicly.", "evidence": "docs/planning/WORK-STATE.md"}
   ],
   "milestones": [
     {"id": "F0", "title": "Existing community foundation", "state": "verified", "detail": "Consolidated project, provenance, GitHub contribution workflow and evidence-led Pages site."},
     {"id": "F1", "title": "The Oasis definition", "state": "verified", "detail": "Hub-centered product blueprint, requirement/decision traceability, portable contributor guidance, in-place repository migration, protected checks, and a live Pages release matching the merged source are verified."},
+    {"id": "LV1", "title": "Private LAN visitor pilot", "state": "implemented", "detail": "A five-client desktop visitor slice with a shared Hub, island/observatory, avatars, portal travel, durable saves and recovery. Two physical computers, host operating conditions and 24-hour evidence are required before the pilot is verified complete."},
     {"id": "S1", "title": "Internal local Oasis proof", "state": "planned", "detail": "Local Hub/dashboard/avatar/Home entry plus dual-authoring World SDK, interpreted guest runtime, two original scenes, player-owned personalization, exact resume and recoverable local save/export."},
     {"id": "S2", "title": "Accounts and shared core", "state": "planned", "detail": "Stage durable account/profile/location/Home ownership and eligible discovery, then authoritative shared Hub/rooms/text with changed-client permission tests."},
     {"id": "S3", "title": "Proximity and party voice", "state": "planned", "detail": "Authorized media routes, recipient/lifecycle behavior, resource limits and forbidden-delivery evidence."},
@@ -27,5 +29,5 @@
     {"title": "Architecture", "detail": "Help define small, testable identity, avatar, Home, world and runtime boundaries before implementation."},
     {"title": "Documentation", "detail": "Improve acceptance criteria, contributor onboarding, traceability and evidence quality."}
   ],
-  "limits": "No real login, playable Hub/Home/worlds, avatar wardrobe, world directory, online identity, multiplayer, chat, voice or user publishing exists yet. S1 application work is unstarted. Proposals and research do not establish runtime security, accessibility conformance, device coverage, age/privacy protection, legal readiness or public operations."
+  "limits": "The LAN pilot is a private prototype with test profiles and built-in worlds, not a public service or real account system. Homes, creator tools, arbitrary guest code, public discovery, chat, voice and publishing remain unimplemented. S1/S2 remain planned. Synthetic tests do not establish physical LAN coverage, age/privacy protection, global readiness, accessibility conformance or production capacity."
 }

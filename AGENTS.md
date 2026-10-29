@@ -1,6 +1,6 @@
 # The Oasis project instructions
 
-Current project: **The Oasis**, formerly RPO HUB. The actual project/Git root is this folder. The foundation and product definition are being established before application implementation. Preserve historical requirements and provenance while following the current owner decisions. Do not start S1 or activate later services merely because a planning document describes them; the owner must separately scope/authorize application implementation after F1.
+Current project: **The Oasis**, formerly RPO HUB. The actual project/Git root is this folder. F1 is verified. The owner explicitly authorized **LV1**, a private desktop-browser LAN visitor pilot on 2026-10-26; see [LAN pilot](docs/planning/LAN-PILOT.md). Preserve historical requirements and provenance. LV1 does not complete S1 creator tools or S2 public-account/shared-service scope. Do not activate later services merely because a planning document describes them.
 
 Use Requirement, Verified, Proposed, Unknown and Not applicable. A configuration file is not runtime evidence; public progress must distinguish implemented work, passing checks and deployed behavior.
 
@@ -22,5 +22,9 @@ Read the smallest relevant set. Use Context7 resolution and focused queries for 
 One active source/document writer per checkout. Delegate useful independent research and review read-only; explicitly transfer ownership before another writer starts. Native role definitions live in `.codex/agents/`; `roles/` contains portable mirrors supplied explicitly in other clients. Presence does not prove discovery or loading. Do not change global model/client settings.
 
 Run `npm run check` and `npm run build` before a PR. Keep personal notes, credentials, local archives and unreviewed imported artifacts out of Git. Site publication uses only generated `dist/`, never the whole workspace. Keep PR workflows read-only; deploy only trusted `main` content. Use focused branches and PRs after initial repository bootstrap. Human maintainers control merging.
+
+LV1 uses pinned dependencies and Node 24.22.1. Also run `npm run pilot:check`, `npm run pilot:test` and `npm run pilot:browser`. Pilot output is `pilot/dist/`; private data, invitations, backups, logs and runtime tools stay under ignored `.local/`. Keep physical LAN, host-reboot, render-performance and soak evidence separate. Do not change firewall, VPN, power, startup or public-exposure settings as an incidental code change.
+
+The rebuild workshop is a separate local teaching application. Run `npm run workshop:check`, `npm run workshop:browser` and `npm run workshop:build`; the workshop CI also extracts its ZIP outside the checkout and installs/checks/tests that standalone checkpoint. Require Foundation, pilot and workshop jobs before merging a consolidation. Return the canonical checkout to synchronized `main` and retire proven-preserved task branches/worktrees.
 
 Public source/Pages publication is authorized for the community foundation. Child-data collection, public application services, billing, media recording, payments, AI personas and unrestricted guest execution need their separate implementation/readiness gates.

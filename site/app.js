@@ -1,9 +1,10 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-const themes = new Set(['sunset', 'arcade', 'meadow']);
 const themeKey = 'rpo-hub-theme';
 const motionKey = 'rpo-hub-pause-motion';
 const root = document.documentElement;
-const themeSelect = document.querySelector('#theme-select');
+const themeButton = document.querySelector('.theme-picker-trigger');
+const fallbackSelect = document.querySelector('#theme-fallback');
+const themeDialog = document.querySelector('#theme-dialog');
 const motionToggle = document.querySelector('.motion-toggle');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -11,46 +12,64 @@ function getSession(key) {
   try { return sessionStorage.getItem(key); } catch { return null; }
 }
 function setSession(key, value) {
-  try { sessionStorage.setItem(key, value); } catch { /* A blocked session store must not break navigation. */ }
+  try { sessionStorage.setItem(key, value); } catch { /* Storage can be blocked without breaking the page. */ }
 }
 function setTheme(value, persist = true) {
-  const theme = themes.has(value) ? value : 'sunset';
+  const radio = [...document.querySelectorAll('input[name="site-theme"]')].find(input => input.value === value);
+  const option = [...(fallbackSelect?.options || [])].find(item => item.value === value);
+  const theme = radio?.value || option?.value || 'sunset';
   root.dataset.theme = theme;
-  if (themeSelect) themeSelect.value = theme;
+  if (radio) radio.checked = true;
+  if (fallbackSelect) fallbackSelect.value = theme;
   if (persist) setSession(themeKey, theme);
 }
-function setPaused(paused, persist = true) {
-  root.classList.toggle('motion-paused', paused);
-  if (!motionToggle) return;
-  motionToggle.setAttribute('aria-pressed', String(paused));
-  motionToggle.querySelector('.motion-label').textContent = paused ? 'Resume motion' : 'Pause motion';
-  motionToggle.setAttribute('aria-label', paused ? 'Resume animation' : 'Pause animation');
-  if (persist) setSession(motionKey, String(paused));
-}
 
-setTheme(getSession(themeKey) || 'sunset', false);
-setPaused(getSession(motionKey) === 'true' || reducedMotion.matches, false);
-if (reducedMotion.matches && motionToggle) {
-  motionToggle.disabled = true;
-  motionToggle.title = 'Your device requests reduced motion';
-  motionToggle.querySelector('.motion-label').textContent = 'Reduced motion';
-  motionToggle.setAttribute('aria-label', 'Animation reduced by your device preference');
+setTheme(root.dataset.theme || 'sunset', false);
+
+if (themeDialog && typeof themeDialog.showModal === 'function' && themeButton) {
+  themeButton.addEventListener('click', () => {
+    const selected = themeDialog.querySelector(`input[name="site-theme"][value="${CSS.escape(root.dataset.theme)}"]`);
+    if (selected) selected.checked = true;
+    themeDialog.showModal();
+    selected?.focus();
+  });
+  themeDialog.addEventListener('change', event => {
+    const radio = event.target.closest('input[name="site-theme"]');
+    if (radio) setTheme(radio.value);
+  });
+  themeDialog.querySelector('.dialog-done')?.addEventListener('click', () => themeDialog.close('done'));
+  themeDialog.addEventListener('click', event => {
+    if (event.target === themeDialog) themeDialog.close('backdrop');
+  });
+  themeDialog.addEventListener('close', () => themeButton.focus());
 }
-themeSelect?.addEventListener('change', event => setTheme(event.currentTarget.value));
+fallbackSelect?.addEventListener('change', event => setTheme(event.currentTarget.value));
+
+let userPaused = getSession(motionKey) === 'true';
+function updateMotionState() {
+  const reduced = reducedMotion.matches;
+  const hidden = document.hidden;
+  root.classList.toggle('motion-paused', userPaused || reduced || hidden);
+  if (!motionToggle) return;
+  motionToggle.disabled = reduced;
+  motionToggle.setAttribute('aria-pressed', String(userPaused));
+  const label = motionToggle.querySelector('.motion-label');
+  if (reduced) {
+    label.textContent = 'Reduced motion';
+    motionToggle.setAttribute('aria-label', 'Decorative motion is limited by your device preference');
+    motionToggle.title = 'Your device requests reduced motion';
+  } else {
+    label.textContent = userPaused ? 'Resume motion' : 'Pause motion';
+    motionToggle.setAttribute('aria-label', userPaused ? 'Resume decorative motion' : 'Pause decorative motion');
+    motionToggle.removeAttribute('title');
+  }
+}
+updateMotionState();
 motionToggle?.addEventListener('click', () => {
   if (reducedMotion.matches) return;
-  setPaused(!root.classList.contains('motion-paused'));
+  userPaused = !userPaused;
+  setSession(motionKey, String(userPaused));
+  updateMotionState();
 });
-reducedMotion.addEventListener?.('change', event => {
-  if (event.matches) {
-    setPaused(true);
-    motionToggle.disabled = true;
-    motionToggle.title = 'Your device requests reduced motion';
-    motionToggle.querySelector('.motion-label').textContent = 'Reduced motion';
-    motionToggle.setAttribute('aria-label', 'Animation reduced by your device preference');
-  } else {
-    motionToggle.disabled = false;
-    motionToggle.removeAttribute('title');
-    setPaused(getSession(motionKey) === 'true');
-  }
-});
+reducedMotion.addEventListener?.('change', updateMotionState);
+document.addEventListener('visibilitychange', updateMotionState);

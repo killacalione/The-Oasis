@@ -1,0 +1,23 @@
+import type { Server,IncomingMessage,ServerResponse } from 'node:http';import { readFile } from 'node:fs/promises';import { existsSync,readFileSync,writeFileSync } from 'node:fs';import { randomBytes,timingSafeEqual } from 'node:crypto';import path from 'node:path';import { fileURLToPath } from 'node:url';
+import { validLocation } from '../shared/worlds.js';import type { Store } from './store.js';
+declare const __LESSON__:number;
+export const json=(res:ServerResponse,status:number,data:unknown)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
+export async function body(req:IncomingMessage):Promise<Record<string,unknown>>{if(!req.headers['content-type']?.startsWith('application/json'))throw new Error('Use JSON.');let text='';for await(const bytes of req){text+=bytes.toString();if(Buffer.byteLength(text)>4096)throw new Error('Request too large.');}const value=JSON.parse(text);if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Use an object.');return value;}
+export function invitation(directory:string){const file=path.join(directory,'invite.txt');if(!existsSync(file))writeFileSync(file,randomBytes(16).toString('hex'),{mode:0o600});const invite=process.env.OASIS_INVITE||readFileSync(file,'utf8').trim();if(!/^[A-Za-z0-9_-]{12,128}$/.test(invite))throw new Error('Use an invitation with12–128 letters/digits/_/-.');return invite;}
+export function base(server:Server){return`http://127.0.0.1:${(server.address() as {port:number}).port}`;}
+export function attachRoutes(server:Server,store:Store,invite:string,extra:{config?:()=>object;health?:()=>object;join?:(req:IncomingMessage,res:ServerResponse,route:string)=>Promise<void>}={}){
+  const assets=fileURLToPath(new URL('../client/',import.meta.url));
+  server.on('request',(req,res)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Content-Security-Policy',`default-src 'self';script-src 'self';style-src 'self';img-src 'self' data:;connect-src 'self' ${base(server).replace('http:','ws:')};object-src 'none';frame-ancestors 'none'`);
+    if(`http://${req.headers.host}`!==base(server)||(req.headers.origin&&req.headers.origin!==base(server))||(req.method==='POST'&&req.headers.origin!==base(server)))return json(res,403,{error:'Host or origin denied.'});
+    void(async()=>{const route=new URL(req.url||'/',base(server)).pathname;
+      if(route.startsWith('/matchmake/')){if(extra.join&&req.method==='POST')return extra.join(req,res,route);return json(res,403,{error:'Only the fixed classroom session is available.'});}
+      if(req.method==='GET'&&route==='/healthz'){store.db.prepare('SELECT 1').get();return json(res,200,{status:'ready',lesson:__LESSON__,clients:0,...extra.health?.()});}
+      if(req.method==='GET'&&route==='/api/config')return json(res,200,{lesson:__LESSON__,...extra.config?.()});
+      if(req.method==='GET'&&route==='/api/host-invite')return json(res,200,{invite});
+      if(req.method==='POST'&&route==='/api/profiles'){const data=await body(req);if(Object.keys(data).sort().join(',')!=='color,invite,name'||typeof data.invite!=='string'||Buffer.byteLength(data.invite)!==Buffer.byteLength(invite)||!timingSafeEqual(Buffer.from(data.invite),Buffer.from(invite)))return json(res,403,{error:'Valid invitation required.'});return json(res,201,store.create(data.name,data.color));}
+      if(req.method==='GET'&&route==='/api/profile'){const token=req.headers.authorization?.replace(/^Bearer /,'');const profile=store.authenticate(token);return profile?json(res,200,{profile,canResume:validLocation(profile.location)}):json(res,401,{error:'Profile key not recognized.'});}
+      const files:Record<string,[string,string]>={'/':['index.html','text/html'],'/app.js':['app.js','text/javascript'],'/style.css':['style.css','text/css']};const file=files[route];if(!file||!['GET','HEAD'].includes(req.method||''))return json(res,404,{error:'Not found.'});const bytes=await readFile(path.join(assets,file[0]));res.writeHead(200,{'Content-Type':file[1]+'; charset=utf-8','Cache-Control':'no-store'});res.end(req.method==='HEAD'?undefined:bytes);
+    })().catch(()=>{if(!res.headersSent)json(res,400,{error:'Request rejected; check its fields or saved data.'});else res.end();});
+  });
+}
+export function settings(){if(process.versions.node!=='24.22.1')throw new Error('Use Node24.22.1.');if(process.env.OASIS_BIND&&process.env.OASIS_BIND!=='127.0.0.1')throw new Error('The workshop only binds127.0.0.1.');const port=Number(process.env.OASIS_PORT??2571);if(!Number.isSafeInteger(port)||port<0||port>65535)throw new Error('Invalid port.');return{port,directory:path.resolve(process.env.OASIS_DATA_DIR||'.local/data')};}

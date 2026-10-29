@@ -1,6 +1,8 @@
 # Security, privacy and trust
 
-Current scope is a public source repository and static progress site. Credentials, raw owner interviews, personal budgets, provider/model endpoints, preservation archives and unreviewed imported material stay local. Review tracked files before publication; build/upload only generated `dist/`.
+The public surface remains source and the static progress site. A separate [LV1 private LAN pilot](../planning/LAN-PILOT.md) is authorized. Credentials, raw owner interviews, personal budgets, provider/model endpoints, preservation archives and unreviewed imported material stay local. Review tracked files before publication; Pages build/upload remains only generated root `dist/`.
+
+LV1 accepts invited adult test profiles and built-in world content only. Default loopback and explicit private-interface binding, HTTP/WebSocket Host/Origin gates, bounded payload/rate/session/profile counts, server-owned positions/appearance/travel and hashed random session keys are implemented. SQLite data, invitations, logs, backups and portable tools are ignored. No guest code, uploads, public access, microphone, chat or real age/account assurance is implemented. HTTP/WS on a trusted LAN is a development limit; later internet operation needs its own HTTPS/WSS and security review. No firewall/VPN/startup/power policy is changed by the code build. Local automated denial tests are evidence of those cases, not production certification.
 
 Use read-only `pull_request` checks, SHA-pinned reviewed Actions, GitHub-hosted runners and main-only Pages deployment with narrowly scoped permissions. Do not execute contributor code through privileged `pull_request_target`/`workflow_run` paths. Private reporting is described in the root security policy.
 

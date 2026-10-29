@@ -1,5 +1,21 @@
 # Foundation verification
 
+## Early-alpha consolidation — 2026-10-29 local verification
+
+The [current ledger](docs/planning/WORK-STATE.md#early-alpha-consolidation--2026-10-29) records the integrated website/pilot/workshop source and evidence boundaries. On pinned Node 24.22.1: Foundation check/build and pilot type check passed; 18 pilot native and 18 browser checks passed; all eight workshop checkpoints and ten final browser scenarios passed. A separately extracted ZIP installed its own lockfile and passed type/native/browser checks. CI repeats that extracted-package proof and gates Pages on Foundation, pilot and workshop jobs.
+
+The classroom regression checks cover a nonzero camera heading, a 400ms delayed travel confirmation with no movement during the pending window, exact destination-facing recovery after idle/reload, failed-write camera/world preservation, and a 6500ms late acknowledgement reconciled through explicit reconnect. Both applications report zero unexpected primary-page/console errors. Packaging verification covers 14 documents, 42 source appendices, 68 ZIP entries, all 67 payload hashes/lengths, local directory links, unique anchors and private-data exclusions.
+
+Independent information-site QA passed five routes/nine themes, selection persistence, keyboard/native-dialog focus and fallback, pause/reduced motion, Home viewport fit and all-route 320/375px reflow. Host pilot rendering measured 143.95 FPS median with NVIDIA RTX 2060 SUPER/D3D11 at 1280×720 viewport; physical multi-device, actual zoom, assistive technology, reboot, off-device backup and full-duration soak retain separate acceptance gates. Historical results below remain tied to their original revisions.
+
+Source/local checks, protected PR/main CI, Pages/live SHA, final preview and retirement are distinct evidence gates. Final Git/deployment/preview/cleanup observations are recorded after publication in the local consolidation audit and completion report; the build's generated revision identifies the source without guessing a future merge SHA.
+
+## LV1 local implementation evidence — 2026-10-26
+
+See the [LAN pilot runbook](docs/planning/LAN-PILOT.md) and [current ledger](docs/planning/WORK-STATE.md). On portable Node24.22.1 the information-site check/build, TypeScript and whitespace checks passed. Fifteen real native/integration tests and twelve Chromium153.0.8010.12 browser checks passed. They cover five-seat authority, modified-client denials, durable exact resume, failed writes, crash/restart, consistent backup/restore, lifecycle cleanup, input/mouse controls and interrupted-arrival recovery. A 1280×720 steady five-sample rendering median measured59.71FPS with SwiftShader software rendering. The primary browser reported zero page/console errors. These are local, revision-stamped test artifacts, not physical GPU/device or public-service certification.
+
+Home's information-site viewport fit and portal visibility were replayed at1280×720,1440×900 and375×812; all five routes returned200. The original three-theme main baseline remains separate from the unmerged nine-theme feature branch. A0.003-hour synthetic run checked only the soak harness. Two physical computers, selected-LAN reachability, host-reboot conditions, off-device backups and a full24-hour result remain unverified. LV1 remains implemented and S1/S2 planned. Required PR checks, human merge and any information-site publication retain their own evidence gates; the pilot is never a Pages artifact.
+
 The foundation separates implemented configuration, locally passing checks and observed remote deployment. Current commands:
 
 ```sh
@@ -9,6 +25,36 @@ npm run dev
 ```
 
 Input archive equality and merge counts are documented in [consolidation evidence](docs/provenance/MERGE-REPORT.md). Current publication requires clean public-file review, valid local links/role mirrors/status data, generated-only Pages artifacts, passing Actions, a matching live `release.json`, branch policy and the correct repository in GitHub Desktop.
+
+## Pixel-art atmosphere redesign — implementation and local verification — 2026-10-16
+
+The focused branch `feat/oasis-pixel-atmospheres` starts from clean `main` at `9dfc8f18c89c876fccbb4fbf2ac5bafed89ee75d`; implementation commit is `0588fb6a8aa4d9b01280bcde7e0efcb532e2109b`. This updates only the five-page information site. It preserves the product explanation, verified F1 progress, `/The-Oasis/` hosting base, existing `sunset`, `arcade`, and `meadow` preference IDs and browser-session keys, CSP and curated `dist/` boundary. S1 remains unstarted. The local commit has not yet been published, merged or deployed.
+
+### Research translated into original design
+
+- The cozy, welcoming direction takes high-level inspiration from the official [Stardew Valley anniversary page](https://www.stardewvalley.net/stardew-valley-10-year-anniversary/), whose publisher reported 50 million copies sold in February 2026. This is a reach signal for one specific game, not a universal popularity ranking.
+- [Sea of Stars' official press kit](https://sabotagestudio.com/presskits/sea-of-stars/) describes retro visual aesthetics with modern design and dynamic lighting; [Hyper Light Drifter's official page](https://www.heartmachine.com/hyper-light-drifter) describes hand-animated subtle background elements. These informed stepped silhouettes, restrained light and sparse ambient motion. No game artwork, sprites, fonts, packages or remote assets were copied or added.
+- The picker uses native [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog) and radio behavior with a tested native-select fallback. Motion follows [W3C pause/stop/hide guidance](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html). Sources inform implementation but do not certify broad accessibility conformance.
+
+### Implementation and local validation
+
+- Added `site/theme-registry.js` as the nine-setting source for IDs, names, descriptions, palettes, original SVG compositions and ambient fragments. The build derives palette CSS, namespaced scene IDs, nine static thumbnails per page and same-origin `theme-init.js` before CSS. Main controller remains deferred; no runtime dependency or CSP inline exception was added.
+- Settings: Sunset Portal (default), Arcade Night, Handheld Meadow, Moonlit Grove, Sakura Dawn, Ocean Breeze, Autumn Hearth, Snowlight Valley and Starlit Summit. Home has the rich scene; details have quiet scenery. Inactive scenes and thumbnails do not animate. One Pause control preserves explicit preference separately from system reduced motion and hidden-document state.
+- Dialog selection applies immediately; hover alone does not select. Done, close and Escape retain the choice and return focus. A read-only reviewer caught a fallback issue where an unsupported `<dialog>` could remain visible; the fix explicitly hides it when the browser lacks `showModal`, and the checker now asserts this behavior.
+- The checker validates all nine registry entries/palettes, generated assets and same-origin routes, unique SVG IDs, static previews, animation limits (24 Home / eight detail; phone caps are half), unsupported-dialog fallback and a 300 KiB per-route uncompressed HTML/CSS/JS/favicon budget.
+- Environment: Node `v25.9.0`, npm `11.12.1`, Git `2.55.0.3`, PowerShell `7.6.5`; package requires Node `>=24` and adds no dependency. Preview ran at `127.0.0.1:4317`.
+- Playwright used isolated Chromium contexts against the generated build. Home matched the viewport at **1280×720**, **1440×900**, and **375×812 CSS px**, with all four portals visible. At **320×700**, there was no horizontal overflow and the portals remained visible; Home grew to **784 px** vertically. Detail routes scrolled at phone width without horizontal overflow.
+- All four portals/five routes navigated as intended and updated current-page state. Tab focused the skip link; Enter moved to `#main`. All nine themes were tested across five routes (**45/45**); one scene was active and previews remained static. Choices persisted through navigation/reload; invalid IDs visually fell back to Sunset. The phone dialog uses two columns and scrolls to Done; 320 px uses one. Hover did not alter selection; radio arrows applied selection; Escape/Done/close restored focus and kept the choice.
+- Progress badge text/background contrast was computed across nine palettes: minimum **7.167:1**. An emulated no-dialog Chromium context showed the native select, hid the scene gallery, applied/stored Snowlight Valley and had no page errors. Browser runs reported no console/page errors or failed assets.
+- In a fresh 1280×720 no-preference context, normal motion started unpaused. Explicit Pause stored `true`; switching live to reduced motion paused and disabled the control without replacing that value; switching back retained the explicit pause. Resume stored `false`; subsequent system changes did not change the user's choice. No page errors occurred. The CUA in-app preview reported the system reduced-motion preference and disabled its motion control.
+- REA Chromium **155.0.8059.80**, **1280×720**, captured the generated Home at `ev_2076c35b4b283ee3a1fd8c4bfdb4ae108e9ec5e83b0f355e190620fdc50475d7`; its run reported no console/page errors and closed its owned browser after capture.
+- The final sequential `npm run check`, `npm run build` and `git diff --check` passed after the fallback correction. The checker passed for 85 public files and seven role mirrors; the curated build contains five pages. The largest route plus shared CSS, controller, bootstrap and favicon is **86,439 bytes** (about 84.4 KiB), below the 300 KiB budget. The local build records `local-uncommitted` until its source is committed.
+
+### Evidence gaps and release state
+
+- Actual **200% browser zoom** was attempted in headless Playwright, but browser-level zoom shortcuts were unavailable: viewport, DPR and `visualViewport.scale` did not change. This is unverified. Physical devices, alternate engines and broad assistive-technology coverage are also unverified.
+- The isolated headless browser could not produce a real hidden-tab lifecycle transition (both pages stayed visible). Hidden-document suspension is source-checked but not claimed as runtime-verified.
+- This visual change is not evidence for account privacy, runtime security, age policy, online service, playable worlds or release readiness. Before public-release claims, pass protected PR checks, merge without bypass, then verify Actions/Pages, live SHA and output parity. S1 remains unstarted.
 
 ## The Oasis foundation closeout — 2026-10-16
 
