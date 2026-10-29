@@ -302,6 +302,7 @@ body main { animation: page-enter .24s ease-out both; }
   .scene-ambience>*:nth-child(n+4) { display: none; }
 }
 @media (max-width: 390px) {
+  .detail-atmosphere { inset: 0 -12px auto; }
   .wrap { width: calc(100% - 24px); }
   .content-main { width: calc(100% - 24px); }
   .site-nav a { padding-inline: 3px; font-size: 9px; }

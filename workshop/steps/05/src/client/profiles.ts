@@ -1,0 +1,10 @@
+import type { Profile } from '../shared/contracts.js';
+export const storageKey='oasis-workshop-profile';
+export let token='';try{token=localStorage.getItem(storageKey)||'';}catch{}
+export async function api(route:string,method='GET',data?:unknown){const response=await fetch(route,{method,headers:{...(data?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},...(data?{body:JSON.stringify(data)}:{})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Request failed.');return result;}
+export const feedback=(text:string,error=false)=>{const e=document.querySelector('#feedback')!;e.textContent=text;e.classList.toggle('error',error);};
+export function arrival(onProfile:(profile:Profile)=>Promise<void>|void){const form=document.querySelector<HTMLFormElement>('#arrival')!,resume=document.querySelector<HTMLButtonElement>('#resume')!;form.hidden=false;
+  void api('/api/host-invite').then(data=>{document.querySelector<HTMLInputElement>('#invite')!.value=data.invite;}).catch(()=>feedback('Host unavailable. Reload after starting it.',true));
+  if(token){resume.hidden=false;resume.addEventListener('click',()=>{void api('/api/profile').then(async data=>{if(!data.canResume)throw new Error('Saved location is incompatible; retained for explicit recovery outside this class core.');await onProfile(data.profile);form.hidden=true;}).catch(e=>feedback(e.message,true));});}
+  form.addEventListener('submit',e=>{e.preventDefault();const enter=document.querySelector<HTMLButtonElement>('#enter')!;enter.disabled=true;void(async()=>{const data=await api('/api/profiles','POST',{name:document.querySelector<HTMLInputElement>('#name')!.value.trim(),color:document.querySelector<HTMLSelectElement>('#color')!.value,invite:document.querySelector<HTMLInputElement>('#invite')!.value});token=data.token;try{localStorage.setItem(storageKey,token);}catch{feedback('Storage blocked. This tab cannot automatically resume after closing.',true);}await onProfile(data.profile);form.hidden=true;})().catch(e=>feedback(e.message,true)).finally(()=>{enter.disabled=false;});});
+}

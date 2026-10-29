@@ -18,7 +18,10 @@
     "pilot:browser": "node pilot/scripts/browser-test.mjs",
     "pilot:backup": "node pilot/dist/server/admin.js backup",
     "pilot:restore": "node pilot/dist/server/admin.js restore",
-    "pilot:soak": "node pilot/scripts/soak.mjs"
+    "pilot:soak": "node pilot/scripts/soak.mjs",
+    "workshop:check": "node workshop/verify.mjs",
+    "workshop:browser": "node workshop/verify.mjs --browser",
+    "workshop:build": "node scripts/build-workshop.mjs"
   },
   "dependencies": {
     "@babylonjs/core": "9.32.0",

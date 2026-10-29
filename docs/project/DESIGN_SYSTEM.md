@@ -1,12 +1,8 @@
 # Design system
 
-<<<<<<< HEAD
 LV1 has a separate original low-poly 3D interface: a full world view, readily available destination/dashboard controls, readable avatar choices, visitor roster, explicit confirmed-save status and interruption recovery. Successful mouse capture hides the dashboard, expands/resizes the renderer and retains an Escape hint plus travel/error feedback. Escape or lost capture restores controls; denied capture retains the menu. Desktop camera-relative movement, horizontal/vertical third-person orbit, held movement/view buttons, automatic portal crossings, reduced-motion scenery and responsive dashboard overflow are required. Essential travel also has non-spatial dashboard buttons. The information site's pixel art remains its own design. Pilot graphics are code-generated and use no imported third-party art. See the [LAN pilot](../planning/LAN-PILOT.md).
 
-The foundation site is a colorful, original pixel-art project map with five static routes: Home, Project, Progress, Roadmap and Community. Sunset Portal is the default; Arcade Night and Handheld Meadow are selectable per browser-tab session. Detail pages use the same navigation and theme controls. The map is a concept illustration, not a playable world. Keep current stage and evidence visible, and describe future capabilities as aspirations until implemented.
-=======
 The Oasis foundation site is a five-route, dependency-free information hub: Home, Project, Progress, Roadmap and Community. Its visual language combines detailed 16-bit scene composition with chunky 8-bit interface accents, crisp edges and readable system fonts. The map and scenes explain the planned product; they are illustrations, not playable worlds or evidence of in-product capabilities.
->>>>>>> feat/oasis-pixel-atmospheres
 
 ## Atmospheres and art
 
@@ -23,5 +19,7 @@ Make all routes work at 320 CSS pixels and allow natural overflow for enlarged t
 Original references inform mood and composition only: [Stardew Valley](https://www.stardewvalley.net/stardew-valley-10-year-anniversary/), [Sea of Stars](https://sabotagestudio.com/presskits/sea-of-stars/) and [Hyper Light Drifter](https://www.heartmachine.com/hyper-light-drifter/). No third-party game art, fonts, audio, assets or runtime dependencies are included. Reference popularity figures are not compared as a universal ranking.
 
 For S1, the selected loop is explore/personalize/portal travel. Provide trusted Return to Hub and Stop, visible saving/failed states, accessible diagnostics and keyboard alternatives. Essential actions need non-spatial equivalents; color, sound, depth, motion or reaction speed cannot be the only route. Browser and local coding are both required; desktop Monaco is a candidate and does not prove mobile coding support.
+
+R-027/D-044 add a required continuous world view during destination preparation. Keep the source playable, expose destination readiness/delay with nonblocking accessible status, and enable crossing only when ready. Do not hide errors behind a loading animation or imply cold downloads take zero time. General prepared-world travel remains future work; LV1's small procedural switches are the current reference.
 
 Age/cohort/access controls must be genuine enforced behavior, not decorative safety badges. Foundation/legacy UI checks do not establish application accessibility or child safety. See [testing](testing.md) and [demo design](../planning/DEMO-EXPERIENCE.md).

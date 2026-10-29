@@ -1,5 +1,15 @@
 # Foundation verification
 
+## Early-alpha consolidation — 2026-10-29 local verification
+
+The [current ledger](docs/planning/WORK-STATE.md#early-alpha-consolidation--2026-10-29) records the integrated website/pilot/workshop source and evidence boundaries. On pinned Node 24.22.1: Foundation check/build and pilot type check passed; 18 pilot native and 18 browser checks passed; all eight workshop checkpoints and ten final browser scenarios passed. A separately extracted ZIP installed its own lockfile and passed type/native/browser checks. CI repeats that extracted-package proof and gates Pages on Foundation, pilot and workshop jobs.
+
+The classroom regression checks cover a nonzero camera heading, a 400ms delayed travel confirmation with no movement during the pending window, exact destination-facing recovery after idle/reload, failed-write camera/world preservation, and a 6500ms late acknowledgement reconciled through explicit reconnect. Both applications report zero unexpected primary-page/console errors. Packaging verification covers 14 documents, 42 source appendices, 68 ZIP entries, all 67 payload hashes/lengths, local directory links, unique anchors and private-data exclusions.
+
+Independent information-site QA passed five routes/nine themes, selection persistence, keyboard/native-dialog focus and fallback, pause/reduced motion, Home viewport fit and all-route 320/375px reflow. Host pilot rendering measured 143.95 FPS median with NVIDIA RTX 2060 SUPER/D3D11 at 1280×720 viewport; physical multi-device, actual zoom, assistive technology, reboot, off-device backup and full-duration soak retain separate acceptance gates. Historical results below remain tied to their original revisions.
+
+Source/local checks, protected PR/main CI, Pages/live SHA, final preview and retirement are distinct evidence gates. Final Git/deployment/preview/cleanup observations are recorded after publication in the local consolidation audit and completion report; the build's generated revision identifies the source without guessing a future merge SHA.
+
 ## LV1 local implementation evidence — 2026-10-26
 
 See the [LAN pilot runbook](docs/planning/LAN-PILOT.md) and [current ledger](docs/planning/WORK-STATE.md). On portable Node24.22.1 the information-site check/build, TypeScript and whitespace checks passed. Fifteen real native/integration tests and twelve Chromium153.0.8010.12 browser checks passed. They cover five-seat authority, modified-client denials, durable exact resume, failed writes, crash/restart, consistent backup/restore, lifecycle cleanup, input/mouse controls and interrupted-arrival recovery. A 1280×720 steady five-sample rendering median measured59.71FPS with SwiftShader software rendering. The primary browser reported zero page/console errors. These are local, revision-stamped test artifacts, not physical GPU/device or public-service certification.

@@ -1,0 +1,13 @@
+import { movement } from '../shared/worlds.js';import type { WorldView } from './view.js';
+export function inputs(view:WorldView,canvas:HTMLCanvasElement){const keys=new Set<string>(),held=new Set<string>(),looks=new Set<string>();
+  const clear=()=>{keys.clear();held.clear();looks.clear();};
+  window.addEventListener('keydown',e=>{if(e.target instanceof HTMLElement&&/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(['KeyW','KeyA','KeyS','KeyD','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)){e.preventDefault();keys.add(e.code);}});
+  window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',clear);document.addEventListener('visibilitychange',clear);
+  for(const b of document.querySelectorAll<HTMLButtonElement>('[data-move],[data-look]')){const set=b.dataset.look?looks:held,direction=b.dataset.look||b.dataset.move!;b.addEventListener('pointerdown',e=>{if(!b.disabled){set.add(direction);b.setPointerCapture(e.pointerId);}});for(const name of ['pointerup','pointercancel','lostpointercapture','blur'])b.addEventListener(name,()=>set.delete(direction));b.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();set.add(direction);}});b.addEventListener('keyup',()=>set.delete(direction));}
+  const mouse=document.querySelector<HTMLButtonElement>('#mouse')!;
+  const unavailable=()=>{document.querySelector('#feedback')!.textContent='Mouse capture unavailable. Use arrow keys or view buttons.';};
+  mouse.addEventListener('click',()=>{try{const result=canvas.requestPointerLock();result?.catch(unavailable);}catch{unavailable();}});document.addEventListener('pointerlockerror',unavailable);
+  document.addEventListener('pointerlockchange',()=>{clear();const captured=document.pointerLockElement===canvas;document.body.classList.toggle('captured',captured);const panel=document.querySelector<HTMLElement>('#controls')!;panel.hidden=captured;panel.inert=captured;if(captured)canvas.focus();else mouse.focus();});
+  document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)view.look(e.movementX*.002,e.movementY*.002);});
+  return{clear,read(dt:number,enabled=true){if(!enabled||document.hidden){clear();return movement(view.yaw,0,0);}view.look((Number(keys.has('ArrowRight')||looks.has('right'))-Number(keys.has('ArrowLeft')||looks.has('left')))*dt*1.6,(Number(keys.has('ArrowDown')||looks.has('down'))-Number(keys.has('ArrowUp')||looks.has('up')))*dt*1.2);return movement(view.yaw,Number(keys.has('KeyW')||held.has('forward'))-Number(keys.has('KeyS')||held.has('back')),Number(keys.has('KeyD')||held.has('right'))-Number(keys.has('KeyA')||held.has('left')));}};
+}

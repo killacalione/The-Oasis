@@ -25,4 +25,6 @@ Run `npm run check` and `npm run build` before a PR. Keep personal notes, creden
 
 LV1 uses pinned dependencies and Node 24.22.1. Also run `npm run pilot:check`, `npm run pilot:test` and `npm run pilot:browser`. Pilot output is `pilot/dist/`; private data, invitations, backups, logs and runtime tools stay under ignored `.local/`. Keep physical LAN, host-reboot, render-performance and soak evidence separate. Do not change firewall, VPN, power, startup or public-exposure settings as an incidental code change.
 
+The rebuild workshop is a separate local teaching application. Run `npm run workshop:check`, `npm run workshop:browser` and `npm run workshop:build`; the workshop CI also extracts its ZIP outside the checkout and installs/checks/tests that standalone checkpoint. Require Foundation, pilot and workshop jobs before merging a consolidation. Return the canonical checkout to synchronized `main` and retire proven-preserved task branches/worktrees.
+
 Public source/Pages publication is authorized for the community foundation. Child-data collection, public application services, billing, media recording, payments, AI personas and unrestricted guest execution need their separate implementation/readiness gates.

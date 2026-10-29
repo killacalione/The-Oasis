@@ -4,6 +4,8 @@
 
 ## What exists today
 
+**Extremely early alpha:** the repository contains a working local visitor prototype, the nine-theme information site, and a complete eight-checkpoint beginner workshop. The maintained baseline is `main`; completed task branches and temporary worktrees are retired after verified integration.
+
 The **F1 product definition and community foundation is verified**. A separate **LV1 private LAN visitor pilot is implemented**: a desktop-browser 3D Hub, two original worlds, shared presence for up to five invited adult testers, avatar colors, portal travel and acknowledged SQLite saves. It is not a public application service. Real accounts, Homes, creator tools, guest code, chat, voice and publishing remain unimplemented; S1 and S2 remain planned. The [pilot runbook](docs/planning/LAN-PILOT.md) and [work ledger](docs/planning/WORK-STATE.md) separate source, actual checks and the remaining physical/extended-operation gates.
 
 ## Try the private visitor pilot
@@ -15,6 +17,12 @@ On Windows, from this repository root:
 ```
 
 Open `http://127.0.0.1:2567`. The launcher uses an isolated Node 24.22.1 runtime and pinned dependencies without replacing system Node. Choose an avatar and enter the Hub. Follow the [runbook](docs/planning/LAN-PILOT.md) for explicit LAN binding, host invitations, controls, tests, restart, backup and separate restore. No firewall, VPN, power, router or Windows startup setting is changed by the launcher. Two physical computers and a full 24-hour run remain separate acceptance evidence.
+
+## Learn to rebuild it
+
+Start with the [beginner weekend workshop](docs/learning/README.md): student lessons, instructor notes, source-backed architecture, complete runnable checkpoints and follow-on verification. The classroom build starts in an empty folder and finishes a smaller two-world multiplayer/save loop. It uses separate local data and does not start public services or complete LV1/S1/S2 gates. `npm run workshop:build` creates a printable HTML handbook and portable ZIP under ignored `artifacts/oasis-workshop/`; follow the learning guide for checkpoint verification.
+
+The [continuous world-presentation requirement](docs/planning/REQUIREMENTS.md) records the owner's rule for future worlds: keep the current world playable while preparing the next. General prepared-world runtime enforcement remains planned.
 
 ## Start here
 

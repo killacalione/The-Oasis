@@ -100,6 +100,7 @@ try {
   }
   else note('mouse capture fallback remains usable', { pointerLock: 'not available in this browser session' });
   await a.locator('#world-canvas').focus(); await a.keyboard.down('ArrowLeft'); await sleep(300); await a.keyboard.up('ArrowLeft');
+  await until(async () => { const state = await metrics(a); const delta = state.position.facing - state.yaw; return Math.abs(Math.atan2(Math.sin(delta), Math.cos(delta))) < 1e-6; });
   await a.locator('#save-button').click(); await until(() => a.locator('#save-button').isEnabled());
   const confirmed = await savedProfile(a);
   await a.reload(); await a.locator('#resume-button').click(); await a.locator('#arrival').waitFor({ state: 'hidden' });

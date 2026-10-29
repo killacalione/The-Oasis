@@ -87,3 +87,11 @@ The owner separately selected an **in-place** migration of the existing reposito
 | D-041 | The player owns avatar/outfit choice; worlds cannot silently replace it. Incompatible appearance blocks entry or asks the player explicitly | Owner-approved product foundation plan, 2026-10-15; future requirement only |
 | D-042 | Resume preserves world/version, coordinate frame, exact XYZ/facing and confirmed save revision; only acknowledged durable saves count, and failure preserves the record with explicit recovery options | Owner-approved product foundation plan informed by current browser lifecycle sources S109–S110; future behavior, not implemented |
 | D-043 | Rename the existing public repository in place to `killacalione/The-Oasis`, update the local remote and migrate Pages to the new project path, preserving repository history/protection/provenance | Explicit owner selection in current conversation, 2026-10-15; execution evidence belongs in WORK-STATE/VERIFY |
+
+## Continuous world presentation, 2026-10-26
+
+| ID | Decision | Evidence |
+| --- | --- | --- |
+| D-044 | Future worlds prepare while the current world remains playable. Crossing becomes available when the destination is ready; a blocking loading screen must not replace the usable source view. Preparation/admission cannot bypass access policy. Before commit failure preserves source/save; after commit recovery follows the confirmed destination. Bound active/staged resources. | Owner liked LV1's instant-feeling travel, selected **Stay in the current world**, and approved the rebuild/teaching plan on 2026-10-26. Requirement R-027. LV1 bundles small procedural worlds and replaces scenes synchronously; general staging, streaming and creator-world enforcement remain unimplemented. |
+
+The educational scope is a novice weekend build from an empty application folder: two procedural worlds, camera/movement, two independent visitors and confirmed saves. The full pilot at source `753ba4ffe15394f96f2dbbb6811d0fe20fee1522` is the advanced reference. Classroom code and a recorded requirement do not complete LV1 acceptance or S1/S2. See the [learning package](../learning/README.md).

@@ -22,6 +22,12 @@ Keep these domains separate: account identity/profile; avatar/outfit entitlement
 
 Babylon, Monaco and QuickJS remain candidate components until a bounded S1 spike tests exact pins, behavior and dependency/network boundaries in the actual environment. No renderer, editor, runtime, storage, identity provider or backend is selected for production. Later authoritative rooms, durable state, text/media authorization and publishing are separate stage decisions. Voice stays outside guest code. Client adapters document actual capability differences. Adult-only functions remain separately gated from all-age surfaces.
 
+## Required future world lifecycle
+
+R-027/D-044 require **prepare → ready → commit → present → retire**. Keep the source interactive while loading authorized content, building destination resources and establishing admission. Readiness is not an access grant. Enable travel only when presentation is prepared; commit server authority/durability once, present the staged destination, then dispose the source. Cancellation before commit preserves the source and save. Interruption after commit reconciles with that committed record rather than silently restoring an older source save. Bound residency, initially one source plus one staged destination, and measure preparation/first-frame/frame-time/memory/disposal behavior.
+
+This is a requirement for future world hosting/SDK work. The current LV1 renderer disposes the source and synchronously constructs tiny bundled scenes. It does not implement general asset streaming, prepared-scene handoff or cross-server migration. The separate [beginner workshop](../learning/README.md) teaches the current boundaries and uses isolated local data; it is not a production runtime or S1 implementation.
+
 ## Evidence
 
 Current information-site structure and tests are documented in [testing](testing.md) and [VERIFY](../../VERIFY.md). Application boundaries and provider choices remain proposed; a document, candidate SDK or static-site check does not verify a playable Oasis experience or safe guest runtime.

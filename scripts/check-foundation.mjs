@@ -80,7 +80,7 @@ const requirementText=await readFile(path.join(root,'docs/planning/REQUIREMENTS.
 const requirementIds=[...requirementText.matchAll(/^\| (R-\d{3}) \|/gm)].map(match=>match[1]);
 assert(new Set(requirementIds).size===requirementIds.length,'Requirement IDs must not be duplicated');
 for(let number=1;number<=23;number++)assert(requirementIds.includes(`R-${String(number).padStart(3,'0')}`),`Original requirement ID was removed: R-${String(number).padStart(3,'0')}`);
-for(const id of ['R-024','R-025','R-026'])assert(requirementIds.includes(id),`New Oasis requirement is missing: ${id}`);
+for(const id of ['R-024','R-025','R-026','R-027'])assert(requirementIds.includes(id),`New Oasis requirement is missing: ${id}`);
 const roles=files.filter(x=>x.startsWith('.codex/agents/')&&x.endsWith('.toml'));
 assert(roles.length===7,'Expected seven scoped native role adapters');
 for(const rel of roles){

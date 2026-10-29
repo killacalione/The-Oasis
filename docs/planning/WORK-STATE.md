@@ -1,6 +1,19 @@
 # Current work state
 
-<<<<<<< HEAD
+## Early-alpha consolidation — 2026-10-29
+
+Owner authorized integration, verification, protected main merge and retirement of the four linked worktrees. The canonical checkout remains the original project folder. A verified recovery bundle, all 72 original changed/new source paths, an integrity-checked profile database backup and all 280 retiring-worktree evidence files are preserved locally with hash inventories. Historical branch names and release claims below describe their dated checkpoints, not the current inventory.
+
+Implemented locally: integrated LV1/control fixes, nine atmospheres, the eight-lesson rebuild workshop and both Pages-action updates. Corrected inherited lesson links, explicit inline favicons and image policy, standalone Express 5.3.0/lockfile, packaged directory links and 320/375px decorative overflow. Classroom travel suspends movement while pending, aligns camera to confirmed destination, retains orientation on failure and disconnects on an uncertain timeout until an explicit fresh resume. The pilot browser save scenario now waits for the final intentional heading to reach authoritative state before comparing exact recovery; persistence assertions remain exact. API, database and world contracts are preserved.
+
+Verified locally on Node 24.22.1: Foundation check/build (174 public files, seven role mirrors), pilot type checking, 18 native/integration and 18 browser checks; all eight workshop type/build/native checkpoints and ten final classroom browser scenarios; extracted ZIP in a separate temporary directory with its own locked install, type/native/browser checks. The package contains 14 documents, 42 source appendices and 68 ZIP entries; all 67 manifest payload hashes/lengths, local links, anchors and private-data exclusions passed. Independent review checked source preservation and found no remaining blocker after corrections. Failed diagnostic reports remain preserved.
+
+Information-site QA passed all five routes and nine themes, persistence, keyboard dialog/focus, pause/resume, reduced motion, unsupported-dialog fallback, Home at 1280×720/1440×900/375×812 and all-route reflow at 320/375px; zero unexpected browser errors. Automated host pilot rendering identified NVIDIA GeForce RTX 2060 SUPER/D3D11 and a 143.95 FPS median at a 1280×720 viewport (950×654 canvas); this is a host-specific sample, not broad device certification. Actual browser zoom and assistive-technology coverage remain unverified.
+
+Publication/retirement checkpoint: the reviewed source is committed and clean-built before updating PR #11; Foundation, pilot and workshop (including independently extracted package) must pass on the exact PR head. Main's successful CI/Pages and live release revision are verified after the protected squash merge. The preview is then rebuilt at the actual main revision, using its original loopback origin and saved data after a fresh verified backup. Worktrees/branches are retired only after source-tree equivalence and recovery coverage are proven. Exact final Git/deployment/preview/cleanup observations are retained in the ignored local consolidation release audit and the owner-facing completion report.
+
+Remaining acceptance: two physical LAN computers/network coexistence, controlled host reboot, broader physical/assistive-device coverage, off-device backup and full-duration soak. General prepared-world travel and S1/S2 remain planned. No firewall/VPN/power/startup change or public multiplayer deployment is part of this consolidation. The information site is the sole Pages artifact.
+
 ## LV1 interaction corrections — 2026-10-26
 
 Owner approved third-person orbit, automatic walk-through portals and a dashboard available outside mouse capture. This remains LV1 visitor work. The coordinator is the only source/document writer; an independent reviewer inspected controls, portal state, accessibility and tests read-only.
@@ -36,7 +49,7 @@ The information site was separately replayed at 1280×720,1440×900 and375×812:
 Remaining gates: **two physical computers on the selected LAN interface**, actual firewall/VPN coexistence, controlled host-reboot behavior, physical/assistive-device coverage, off-device backups and the **full 24-hour run**. No firewall/VPN/router/power/startup setting or reboot changed. No public application deployment or main merge is claimed. After committing the validated source, start the isolated full soak and inspect its exact revision/start/due/terminal status in the printed `.local/soak-*/evidence/summary.json`; use a separate loopback preview for the owner's interactive visit. Human maintainers retain merge control.
 
 Next concrete action: complete the physical LAN and long-run evidence, keeping the pilot's implemented state until those gates pass; then select the creator-runtime work without erasing S1/S2 requirements.
-=======
+
 ## Pixel-art atmosphere redesign — local implementation checkpoint — 2026-10-16
 
 Task recorded for the approved nine-theme cosmetics refresh. Scope is the existing five-page information site and curated Pages build: detailed 16-bit scenery with chunky 8-bit controls, a rich Home scene, quiet detail-page scenery, immediate accessible theme selection, and coordinated motion controls. The product facts, current F1 evidence and the S1-unstarted boundary remain authoritative.
@@ -56,7 +69,6 @@ Remaining gaps: actual 200% browser zoom and a real hidden-tab transition could 
 Final sequential commands passed: `npm run check` (85 public files, seven role mirrors, five routes, nine registry themes, ID/animation and 300 KiB budget checks), `npm run build` (five pages), and `git diff --check`. Largest measured generated route bundle is 86,439 bytes. The no-dialog fallback was retested after the CSS fix: select visible, dialog gallery hidden, Snowlight Valley applied and stored, no page errors. Commit `0588fb6a8aa4d9b01280bcde7e0efcb532e2109b` is clean locally; remote push/PR and deployment are pending.
 
 Next concrete step: commit the validated source/docs, push the focused branch, then use protected PR checks and verify the final merged Pages release against its SHA.
->>>>>>> feat/oasis-pixel-atmospheres
 
 ## F1 foundation and release evidence — verified
 

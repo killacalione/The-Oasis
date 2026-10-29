@@ -1,0 +1,15 @@
+The Oasis
+Copyright 2026 The Oasis contributors
+
+New maintained repository files are distributed under the Apache License 2.0.
+Referenced upstream projects retain their own licenses and trademarks.
+Original supplied archives, their bootstrap skill and the earlier prototype are
+preserved locally and are not redistributed by this repository. The selected
+project license does not retroactively establish rights to third-party inputs.
+
+The LV1 pilot uses separately licensed npm components, including Babylon.js
+(Apache-2.0), Colyseus and Express (MIT). Build and test components retain their
+own licenses. Exact versions and integrity are recorded in package-lock.json;
+installed packages include their upstream license files. The client build emits
+linked legal comments in app.js.LEGAL.txt. Original pilot geometry and interface
+source are maintained project code; no third-party artwork is bundled.

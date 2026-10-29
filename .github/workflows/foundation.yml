@@ -29,10 +29,10 @@ jobs:
       - run: npm run build
       - name: Configure Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload curated Pages artifact
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
 
@@ -54,10 +54,40 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run pilot:browser
 
+  workshop:
+    name: Rebuild workshop checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.22.1'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-fund
+      - run: npm run workshop:check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run workshop:browser
+      - run: npm run workshop:build
+      - name: Verify extracted classroom package independently
+        shell: bash
+        run: |
+          package_root="$RUNNER_TEMP/oasis-workshop-package"
+          checkpoint="$RUNNER_TEMP/oasis-workshop-checkpoint"
+          python3 -m zipfile -e artifacts/oasis-workshop/oasis-workshop.zip "$package_root"
+          node "$package_root/oasis-workshop/workshop/materialize.mjs" --lesson 8 --into "$checkpoint"
+          cd "$checkpoint"
+          npm ci --ignore-scripts --no-fund
+          npm run check
+          npm test
+          npm run browser
+
   deploy:
     name: Publish progress
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: [validate, pilot]
+    needs: [validate, pilot, workshop]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

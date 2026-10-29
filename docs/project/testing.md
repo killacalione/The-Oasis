@@ -1,6 +1,15 @@
 # Testing and evidence
 
-<<<<<<< HEAD
+## Beginner rebuild workshop
+
+The [classroom package](../learning/README.md) is a separate, local educational two-world application. `npm run workshop:check` materializes and verifies progressive checkpoints; `npm run workshop:browser` runs independent browser behavior checks; `npm run workshop:build` emits the printable handbook and portable ZIP under ignored `artifacts/oasis-workshop/`. Generated classroom workspaces and data remain ignored, use loopback and their own ports/profile keys, and do not touch the running pilot or soak.
+
+Verify an extracted final checkpoint outside the repository with its own lockfile installation, build, type/native/browser checks and distinct test data. Exercise the refusal to overwrite nonempty targets and the absence of symlink/path escapes. Check package hashes, ZIP integrity, handbook local anchors, readable narrow/desktop layouts and full-file code appendices. A teaching checkpoint pass is not LV1, S1/S2, physical-LAN, hardware-renderer or 24-hour evidence. Record source/environment and human classroom timing as unverified until taught.
+
+R-027/D-044 future runtime tests must delay/fail preparation while retaining an interactive source, deny protected preparation, cancel stale work, distinguish before/after-commit failures, avoid blind save rollback, and prove bounded residency plus first-frame/frame-time/memory/disposal behavior. These tests are future SDK obligations; the workshop and small current LV1 worlds do not certify arbitrary-world seamlessness.
+
+The workshop browser suite delays confirmation to test input suspension, destination heading stability, exact idle/reload recovery, failed-travel camera preservation and explicit reconnect after an uncertain timeout. CI extracts the classroom ZIP under its runner temporary directory, materializes lesson 08 and installs its own dependencies before native/browser checks; an in-repository pass alone can inherit parent dependencies and is insufficient portability evidence.
+
 ## LV1 visitor pilot
 
 Run Node24 `npm run pilot:check`, `npm run pilot:test` and `npm run pilot:browser` separately from Foundation checks. Native tests exercise real HTTP/WebSocket clients, fixed global five-seat capacity, invitation/origin/ownership denials, movement/replay/duplicate handling, correlated write failures, acknowledged exact restart recovery, malformed saved-state recovery, live backup and separate restore. Browser tests use isolated profiles, real 3D rendering, keyboard/pointer controls, reload/reconnect, repeated travel/disposal, storage failures and measured FPS. Screenshots/report stay in ignored artifacts. A passing local test is not remote CI evidence.
@@ -9,10 +18,7 @@ Interaction regressions assert keyboard/button strafing against the actual camer
 
 The [LAN pilot runbook](../planning/LAN-PILOT.md) retains two physical computers, selected-interface reachability, host-reboot conditions, representative desktop/browser rendering and full 24-hour operation as independent gates. Synthetic SDK soak clients are loopback server evidence, not physical LAN or five-device rendering coverage. The original ce0edb soak and its generated output must remain isolated from later interaction builds; its result applies only to that revision. Actual command/environment/revision and any gaps are recorded in WORK-STATE and VERIFY. S1/S2 stay planned.
 
-Foundation checks: public data shape, permitted evidence states, tracked/public file boundaries, recognizable secret/local-path patterns, local Markdown links, seven TOML/card mirrors, source JavaScript syntax, all five generated routes and their local links, theme/motion controls and the exact curated site output. Run `npm run check` then `npm run build`; browser review checks desktop/mobile reflow and Home viewport fit, navigation across all routes, theme carry-over, keyboard focus/skip link, reduced-motion behavior, visible motion control, console/page errors and release metadata. Live Pages deployment and local tests are separate evidence gates. If the available browser prefers reduced motion, report that the pause/resume interaction itself could not be exercised in that context.
-=======
 Foundation validation runs `npm run check`, `npm run build` and `git diff --check`. The checker covers structured product status, public-file boundaries, recognizable secrets/local paths, local Markdown links, seven TOML/card role mirrors, JavaScript syntax, roadmap/requirements consistency, all five generated routes, the nine-theme registry, generated palettes/scenes, unique SVG IDs and fragment references, picker/navigation/motion contracts, scene animation limits, route resource budgets and the exact curated Pages output. Each route's uncompressed HTML, CSS, JavaScript and favicon must remain at or below 300 KiB.
->>>>>>> feat/oasis-pixel-atmospheres
 
 For the atmosphere redesign, review the built site rather than source alone. Exercise every theme across all five routes and reload; check the legacy theme IDs and session keys, invalid stored themes, unavailable storage, theme restoration before the stylesheet and fallback select. Verify the dialog opens, all nine cards and Done are reachable at phone size, radio arrow-key selection works, Space/Enter activates controls, selection applies immediately, hover does not select, Escape/close/Done preserve the choice and return focus, and the skip link, current navigation, visible focus and four Home portals work by keyboard.
 
