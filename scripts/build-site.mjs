@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile, copyFile, rm, readdir } from 'node:fs/promi
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { themes, renderScene, themePaletteCss } from '../site/theme-registry.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const data = JSON.parse(await readFile(path.join(root, 'data/project-status.json'), 'utf8'));
@@ -17,6 +18,13 @@ if (!process.env.GITHUB_SHA) {
   } catch {}
 }
 const repo = data.repository;
+const themeIds = themes.map(theme => theme.id);
+if (themes.length !== 9 || new Set(themeIds).size !== themes.length || !['sunset','arcade','meadow'].every(id => themeIds.includes(id))) throw new Error('The nine-theme registry is incomplete or contains duplicate IDs');
+const sourceStyles = await readFile(path.join(root, 'site/styles.css'), 'utf8');
+const paletteMarker = '/* GENERATED THEME PALETTES */';
+if (sourceStyles.split(paletteMarker).length !== 2) throw new Error('Expected exactly one generated palette marker in site/styles.css');
+const generatedStyles = sourceStyles.replace(paletteMarker, themePaletteCss());
+const themeInit = `/* SPDX-License-Identifier: Apache-2.0 */\n(()=>{const ids=${JSON.stringify(themeIds)};try{const saved=sessionStorage.getItem('rpo-hub-theme');if(ids.includes(saved))document.documentElement.dataset.theme=saved;if(sessionStorage.getItem('rpo-hub-pause-motion')==='true')document.documentElement.classList.add('motion-paused');}catch{}try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion-paused');}catch{}const dialog=typeof HTMLDialogElement!=='undefined'&&typeof HTMLDialogElement.prototype.showModal==='function';document.documentElement.classList.add(dialog?'has-dialog':'no-dialog');})();\n`;
 const source = rel => `${repo}/blob/${ref}/${rel.split('/').map(encodeURIComponent).join('/')}`;
 const badge = state => `<span class="badge ${e(state)}">${e(state)}</span>`;
 const routes = [
@@ -32,7 +40,6 @@ const destinations = [
   ['roadmap','Roadmap','The steps still ahead','03'],
   ['community','Community','Ways to take part','04']
 ];
-const art = await readFile(path.join(root,'site/portal-world.svg'),'utf8');
 const linkTo = (key, current) => {
   const target=routes.find(route=>route.key===key);
   return current==='home' ? (target.slug ? `./${target.slug}/` : './') : (target.slug ? `../${target.slug}/` : '../');
@@ -45,13 +52,23 @@ function header(current) {
     <a class="brand" href="${linkTo('home',current)}" aria-label="The Oasis home"><span class="brand-mark" aria-hidden="true">O</span><span>The<span class="brand-accent"> Oasis</span><small>COMMUNITY HUB / FOUNDATION</small></span></a>
     <nav class="site-nav" aria-label="Main navigation">${routes.map(route=>`<a href="${linkTo(route.key,current)}"${route.key===current?' aria-current="page"':''}>${e(route.label)}</a>`).join('')}</nav>
     <div class="site-controls">
-      <label for="theme-select">Theme</label>
-      <select id="theme-select" name="theme" aria-label="Choose a site theme">
-        <option value="sunset">Sunset Portal</option><option value="arcade">Arcade Night</option><option value="meadow">Handheld Meadow</option>
-      </select>
+      <button class="theme-picker-trigger" type="button" aria-haspopup="dialog" aria-controls="theme-dialog"><span class="theme-swatch" aria-hidden="true"></span><span>Choose atmosphere</span><span class="control-caret" aria-hidden="true">⌄</span></button>
+      <label class="theme-fallback-label" for="theme-fallback">Atmosphere</label>
+      <select class="theme-fallback" id="theme-fallback" name="theme" aria-label="Choose a site theme">${themes.map(theme=>`<option value="${theme.id}">${e(theme.name)}</option>`).join('')}</select>
       <button class="motion-toggle" type="button" aria-pressed="false" aria-label="Pause animation"><span class="motion-icon" aria-hidden="true">Ⅱ</span><span class="motion-label">Pause motion</span></button>
     </div>
-  </header>`;
+  </header>${themePicker(current)}`;
+}
+function themePicker(current) {
+  return `<dialog class="theme-dialog" id="theme-dialog" aria-labelledby="theme-dialog-title" aria-describedby="theme-dialog-help">
+    <form method="dialog" class="dialog-topline"><div><p class="eyebrow">A LITTLE CHANGE OF SCENERY</p><h2 id="theme-dialog-title">Choose your atmosphere</h2></div><button class="dialog-close" value="close" aria-label="Close atmosphere picker">×</button></form>
+    <p id="theme-dialog-help" class="theme-dialog-help">Choose a setting for your visit. The page changes as soon as you select it; Done keeps your choice.</p>
+    <fieldset class="theme-grid"><legend class="sr-only">Available site atmospheres</legend>${themes.map(theme=>`<label class="theme-card" data-theme-card="${theme.id}"><input type="radio" name="site-theme" value="${theme.id}"${theme.id==='sunset'?' checked':''}><span class="theme-card-preview">${renderScene(theme,'thumbnail',`picker-${current}-${theme.id}`)}</span><span class="theme-card-copy"><strong>${e(theme.name)}</strong><span>${e(theme.description)}</span></span><span class="theme-checkmark" aria-hidden="true">✓</span></label>`).join('')}</fieldset>
+    <div class="dialog-actions"><span class="theme-selection-note"><span class="selection-spark" aria-hidden="true">✦</span> Selection applies immediately</span><button class="dialog-done" type="button">Done</button></div>
+  </dialog>`;
+}
+function themeLayers(mode, namespace) {
+  return themes.map(theme=>renderScene(theme,mode,`${namespace}-${theme.id}`)).join('');
 }
 function footer(current) {
   const prefix=pagePrefix(current);
@@ -64,7 +81,7 @@ function documentPage(current, title, description, inner) {
 <html lang="en" data-theme="sunset"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="${e(description)}"><meta name="color-scheme" content="light dark">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
-<title>${e(title)} · The Oasis</title><link rel="stylesheet" href="${prefix}styles.css"><link rel="icon" href="${prefix}favicon.svg" type="image/svg+xml"><script src="${prefix}app.js" defer></script></head>
+<title>${e(title)} · The Oasis</title><script src="${prefix}theme-init.js"></script><link rel="stylesheet" href="${prefix}styles.css"><link rel="icon" href="${prefix}favicon.svg" type="image/svg+xml"><script src="${prefix}app.js" defer></script></head>
 <body data-page="${e(current)}">${header(current)}${inner}${footer(current)}</body></html>`;
 }
 function homePage() {
@@ -79,13 +96,13 @@ function homePage() {
     </section>
     <section class="portal-map" aria-labelledby="map-title">
       <div class="map-heading"><div><p class="eyebrow">YOUR STARTING POINT</p><h2 id="map-title">Pick a portal</h2></div><span class="map-stamp">OASIS / 001</span></div>
-      <div class="map-canvas">${art}<div class="portal-grid">${tiles}</div><p class="map-caption">An information-site map — not a playable Hub <span aria-hidden="true">✦</span></p></div>
+      <div class="map-canvas"><div class="scene-stack" aria-hidden="true">${themeLayers('home','home')}</div><div class="portal-grid">${tiles}</div><p class="map-caption">An information-site map — not a playable Hub <span aria-hidden="true">✦</span></p></div>
     </section>
   </main>`);
 }
 function projectPage() {
   const cards=content.project.pillars.map((item,index)=>`<article class="info-card"><span class="card-index">0${index+1}</span><h2>${e(item.title)}</h2><p>${e(item.detail)}</p></article>`).join('');
-  const inner=`<main id="main" class="content-main wrap"><div class="page-kicker">01 / THE PROJECT</div><section class="page-hero"><p class="eyebrow">${e(data.stage)} · BIG VISION, HONEST START</p><h1>${e(routes[1].title)}</h1><p class="page-lead">${e(data.summary)}</p></section>
+  const inner=`<main id="main" class="content-main wrap"><div class="detail-atmosphere" aria-hidden="true">${themeLayers('detail','project')}</div><div class="page-kicker">01 / THE PROJECT</div><section class="page-hero"><p class="eyebrow">${e(data.stage)} · BIG VISION, HONEST START</p><h1>${e(routes[1].title)}</h1><p class="page-lead">${e(data.summary)}</p></section>
     <section class="content-section"><div class="section-intro"><p class="eyebrow">THE EXPERIENCE WE ASPIRE TO</p><h2>Start in the Hub.<br>Go anywhere.</h2></div><div class="info-grid">${cards}</div></section>
     <section class="callout"><span class="callout-spark" aria-hidden="true">✦</span><div><p class="eyebrow">WHERE WE ARE TODAY</p><h2>Groundwork before gateways.</h2><p>${e(data.limits)}</p><a class="inline-link" href="${linkTo('progress','project')}">See the verified foundation work →</a></div></section>
     <section class="content-section two-column"><div><p class="eyebrow">THE NEXT PROOF</p><h2>Start small enough to get right.</h2></div><div><p>${e(content.project.next)}</p><a class="inline-link" href="${e(source('docs/planning/OASIS-EXPERIENCE.md'))}">Read the Oasis experience blueprint →</a><br><a class="inline-link" href="${e(source('docs/planning/S1-IMPLEMENTATION-BRIEF.md'))}">Read the proposed S1 acceptance brief →</a><br><a class="inline-link" href="${e(source('docs/planning/LAN-PILOT.md'))}">Read the private LAN pilot runbook →</a></div></section>
@@ -94,7 +111,7 @@ function projectPage() {
 }
 function progressPage() {
   const cards=data.currentWork.map((item,index)=>`<article class="progress-card"><div class="progress-card-top"><span class="card-index">0${index+1}</span>${badge(item.state)}</div><h2>${e(item.title)}</h2><p>${e(item.detail)}</p><a class="inline-link" href="${e(source(item.evidence))}">Open evidence →</a></article>`).join('');
-  const inner=`<main id="main" class="content-main wrap"><div class="page-kicker">02 / PROJECT PROGRESS</div><section class="page-hero"><p class="eyebrow">REVIEWED ${e(data.updated)} · EVIDENCE FIRST</p><h1>${e(routes[2].title)}</h1><p class="page-lead">${e(content.progress.intro)}</p></section>
+  const inner=`<main id="main" class="content-main wrap"><div class="detail-atmosphere" aria-hidden="true">${themeLayers('detail','progress')}</div><div class="page-kicker">02 / PROJECT PROGRESS</div><section class="page-hero"><p class="eyebrow">REVIEWED ${e(data.updated)} · EVIDENCE FIRST</p><h1>${e(routes[2].title)}</h1><p class="page-lead">${e(content.progress.intro)}</p></section>
     <section class="content-section"><div class="progress-summary"><span class="stage-chip">CURRENT STAGE</span><strong>${e(data.stage)}</strong><p>Verified foundation tasks are separate from a locally passing check, a merged change and a deployed site.</p></div><div class="progress-grid">${cards}</div></section>
     <section class="callout"><span class="callout-spark" aria-hidden="true">↗</span><div><p class="eyebrow">HOW TO READ THIS PAGE</p><h2>Evidence, not activity theater.</h2><p>Implemented means the source exists; verified means a stated check has evidence; planned means not built; blocked means a prerequisite remains. No progress bars, dates or engagement numbers are invented.</p><a class="inline-link" href="${e(source('docs/planning/WORK-STATE.md'))}">Open the work ledger →</a></div></section>
   </main>`;
@@ -102,7 +119,7 @@ function progressPage() {
 }
 function roadmapPage() {
   const milestones=data.milestones.map((item,index)=>`<li class="roadmap-row"><span class="roadmap-id">${e(item.id)}</span><div><h2>${e(item.title)}</h2><p>${e(item.detail)}</p></div><span class="roadmap-track" aria-hidden="true">${index===0?'●':'○'}</span>${badge(item.state)}</li>`).join('');
-  const inner=`<main id="main" class="content-main wrap"><div class="page-kicker">03 / MILESTONES</div><section class="page-hero"><p class="eyebrow">OUTCOMES TO PROVE · NOT PROMISED DATES</p><h1>${e(routes[3].title)}</h1><p class="page-lead">${e(content.roadmap.intro)}</p></section>
+  const inner=`<main id="main" class="content-main wrap"><div class="detail-atmosphere" aria-hidden="true">${themeLayers('detail','roadmap')}</div><div class="page-kicker">03 / MILESTONES</div><section class="page-hero"><p class="eyebrow">OUTCOMES TO PROVE · NOT PROMISED DATES</p><h1>${e(routes[3].title)}</h1><p class="page-lead">${e(content.roadmap.intro)}</p></section>
     <section class="content-section"><ol class="roadmap-list">${milestones}</ol><p class="roadmap-note"><span aria-hidden="true">✦</span> Each stage needs its own evidence and review. A plan is not a release promise.</p></section>
     <section class="callout"><span class="callout-spark" aria-hidden="true">01</span><div><p class="eyebrow">NEXT PROPOSED APPLICATION MILESTONE</p><h2>Explore, personalize, travel.</h2><p>S1 proposes a local proof with first arrival in a Hub/dashboard, player-owned appearance, optional Home, two original worlds, exact confirmed-location resume, recoverable saves, and an independently stoppable interpreted runtime with bounded host commands and hostile-case tests. A separate private LV1 visitor pilot is implemented; S1 creator/runtime containment remains unimplemented.</p><a class="inline-link" href="${e(source('docs/planning/S1-IMPLEMENTATION-BRIEF.md'))}">Read the S1 brief →</a></div></section>
   </main>`;
@@ -110,7 +127,7 @@ function roadmapPage() {
 }
 function communityPage() {
   const areas=data.contributionAreas.map((item,index)=>`<article class="community-card"><span class="card-index">0${index+1}</span><h2>${e(item.title)}</h2><p>${e(item.detail)}</p></article>`).join('');
-  const inner=`<main id="main" class="content-main wrap"><div class="page-kicker">04 / COMMUNITY</div><section class="page-hero"><p class="eyebrow">A FRIENDLY PLACE TO START</p><h1>${e(routes[4].title)}</h1><p class="page-lead">${e(content.community.intro)}</p></section>
+  const inner=`<main id="main" class="content-main wrap"><div class="detail-atmosphere" aria-hidden="true">${themeLayers('detail','community')}</div><div class="page-kicker">04 / COMMUNITY</div><section class="page-hero"><p class="eyebrow">A FRIENDLY PLACE TO START</p><h1>${e(routes[4].title)}</h1><p class="page-lead">${e(content.community.intro)}</p></section>
     <section class="content-section"><div class="section-intro"><p class="eyebrow">SMALL CONTRIBUTIONS COUNT</p><h2>Bring a question, a source,<br>or a thoughtful review.</h2></div><div class="info-grid">${areas}</div></section>
     <section class="community-links" aria-labelledby="community-links-title"><div><p class="eyebrow">FOLLOW THE PROJECT</p><h2 id="community-links-title">Open doors, clear expectations.</h2><p>Start with public project guidance; use private security reporting for vulnerabilities.</p></div><div class="link-list">
       <a href="${e(repo)}/discussions"><span>Discussions</span><span>Questions and ideas ↗</span></a>
@@ -135,12 +152,13 @@ for(let index=0;index<locations.length;index++){
   await mkdir(path.dirname(target),{recursive:true});
   await writeFile(target,pages[index]);
 }
-await copyFile(path.join(root,'site/styles.css'),path.join(output,'styles.css'));
+await writeFile(path.join(output,'styles.css'),generatedStyles);
 await copyFile(path.join(root,'site/app.js'),path.join(output,'app.js'));
+await writeFile(path.join(output,'theme-init.js'),themeInit);
 await copyFile(path.join(root,'site/favicon.svg'),path.join(output,'favicon.svg'));
 await writeFile(path.join(output,'.nojekyll'),'');
 await writeFile(path.join(output,'release.json'),JSON.stringify({project:data.project,revision,statusUpdated:data.updated,schemaVersion:1},null,2)+'\n');
-const expected=['.nojekyll','app.js','community/index.html','favicon.svg','index.html','progress/index.html','project/index.html','release.json','roadmap/index.html','styles.css'].sort();
+const expected=['.nojekyll','app.js','community/index.html','favicon.svg','index.html','progress/index.html','project/index.html','release.json','roadmap/index.html','styles.css','theme-init.js'].sort();
 const walk=async(dir='')=>{
   const found=[];
   for(const item of await readdir(path.join(output,dir),{withFileTypes:true})){

@@ -1,7 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { themes, renderScene, themePaletteCss } from '../site/theme-registry.js';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const errors=[];
@@ -19,6 +21,7 @@ catch {
     }return result;
   } files=await walk();
 }
+files=files.filter(rel=>existsSync(path.join(root,rel)));
 assert(new Set(files).size===files.length,'Duplicate public paths');
 for(const rel of files){
   assert(!/^\.(?:local|agents)\/|^(?:prototype|project-foundation-new-project)\//.test(rel),`Private/history input tracked: ${rel}`);
@@ -95,21 +98,37 @@ assert(/path: dist/.test(workflow),'Pages must upload only dist');
 
 const style=await readFile(path.join(root,'site/styles.css'),'utf8');
 const app=await readFile(path.join(root,'site/app.js'),'utf8');
-const scene=await readFile(path.join(root,'site/portal-world.svg'),'utf8');
-for(const theme of ['sunset','arcade','meadow'])assert(style.includes(`data-theme="${theme}"`) || theme==='sunset','Missing theme palette: '+theme);
+const themeInitSource = await readFile(path.join(root,'scripts/build-site.mjs'),'utf8');
+const themeIds=themes.map(theme=>theme.id);
+assert(themes.length===9,'Theme registry must contain nine distinct settings');
+assert(new Set(themeIds).size===themeIds.length,'Theme registry IDs must be unique');
+for(const id of ['sunset','arcade','meadow'])assert(themeIds.includes(id),`Legacy theme ID must remain available: ${id}`);
+for(const theme of themes){
+  assert(theme.name && theme.description && theme.art && theme.ambient?.length,`Theme metadata/art is incomplete: ${theme.id}`);
+  assert(Object.keys(theme.palette).includes('--page') && Object.keys(theme.palette).includes('--sky-a'),`Theme palette is incomplete: ${theme.id}`);
+  const homeScene=renderScene(theme,'home',`check-home-${theme.id}`);
+  const detailScene=renderScene(theme,'detail',`check-detail-${theme.id}`);
+  const previewScene=renderScene(theme,'thumbnail',`check-preview-${theme.id}`);
+  assert((homeScene.match(/class="ambient/g)||[]).length<=24,`Home animation budget exceeded: ${theme.id}`);
+  assert((detailScene.match(/class="ambient/g)||[]).length<=8,`Detail animation budget exceeded: ${theme.id}`);
+  assert(!previewScene.includes('class="ambient'),`Theme previews must be static: ${theme.id}`);
+  assert(!/(?:href|xlink:href)=["']https?:\/\//i.test(theme.art),`Theme art must not load external resources: ${theme.id}`);
+}
 assert(style.includes('prefers-reduced-motion'),'Reduced-motion CSS behavior missing');
-assert(style.includes('image-rendering: pixelated'),'Crisp pixel-art rendering guidance missing');
-assert(style.includes('motion-paused') && app.includes('setPaused'),'Motion pause/resume behavior missing');
+assert(style.includes('image-rendering: pixelated') && style.includes('shape-rendering: crispEdges'),'Crisp pixel-art rendering guidance missing');
+assert(style.includes('.scene-layer { display: none') && style.includes('theme-selection-note') && style.includes('max-width: 350px'),'Inactive scene hiding, immediate picker guidance or narrow-phone reflow missing');
+assert(style.includes('.no-dialog .theme-dialog { display: none; }'),'Unsupported browsers must hide the inactive dialog and use the native-select fallback');
+assert(style.includes('motion-paused') && app.includes('userPaused') && app.includes('visibilitychange'),'Pause, user choice and hidden-tab handling missing');
 assert(app.includes('sessionStorage') && app.includes('prefers-reduced-motion'),'Theme/motion session or device preference missing');
-assert(scene.includes('class="world-art"') && scene.includes('pixel-traveler') && scene.includes('glow-portal'),'Original animated landscape pieces missing');
-assert(!/(?:href|xlink:href)=["']https?:\/\//i.test(scene),'World artwork must not load external resources');
+assert(app.includes("addEventListener('close'") && app.includes('themeButton.focus()'),'Dialog close must restore trigger focus');
+assert(themeInitSource.includes("rpo-hub-theme") && themeInitSource.includes('theme-init.js'),'Pre-paint theme restoration asset missing');
 
 // Build first, then validate the actual curated tree and its generated routes/links.
 try{execFileSync(process.execPath,['scripts/build-site.mjs'],{cwd:root,stdio:'pipe'});}catch(error){
   errors.push(`Generated site build failed: ${error.stderr?.toString().trim()||error.message}`);
 }
 const dist=path.join(root,'dist');
-const expected=['.nojekyll','app.js','community/index.html','favicon.svg','index.html','progress/index.html','project/index.html','release.json','roadmap/index.html','styles.css'].sort();
+const expected=['.nojekyll','app.js','community/index.html','favicon.svg','index.html','progress/index.html','project/index.html','release.json','roadmap/index.html','styles.css','theme-init.js'].sort();
 async function outputFiles(dir=dist,rel=''){
   const found=[];
   for(const item of await readdir(dir,{withFileTypes:true})){
@@ -120,17 +139,37 @@ async function outputFiles(dir=dist,rel=''){
 }
 const built=(await outputFiles()).sort();
 assert(JSON.stringify(built)===JSON.stringify(expected),`Generated Pages allowlist mismatch: ${JSON.stringify(built)}`);
+const builtStyles=await readFile(path.join(dist,'styles.css'),'utf8');
+for(const theme of themes)assert(builtStyles.includes(`:root[data-theme="${theme.id}"]`),`Generated palette is missing from published CSS: ${theme.id}`);
 const pagePaths=['index.html','project/index.html','progress/index.html','roadmap/index.html','community/index.html'];
 const pageNames=['home','project','progress','roadmap','community'];
 for(let i=0;i<pagePaths.length;i++){
   const rel=pagePaths[i];
   const html=await readFile(path.join(dist,rel),'utf8');
   assert(new RegExp(`<body data-page="${pageNames[i]}">`).test(html),`Generated route missing or wrong page id: ${rel}`);
-  assert(html.includes('id="theme-select"') && ['sunset','arcade','meadow'].every(theme=>html.includes(`value="${theme}"`)),`Three-theme control missing: ${rel}`);
+  assert(html.includes('id="theme-dialog"') && html.includes('Choose atmosphere') && html.includes('Selection applies immediately'),`Interactive atmosphere picker missing: ${rel}`);
+  for(const theme of themes)assert(html.includes(`data-theme-card="${theme.id}"`) && html.includes(`value="${theme.id}"`) && html.includes(`data-scene="${theme.id}"`),`Theme card/scene missing: ${rel}/${theme.id}`);
   assert(html.includes('class="motion-toggle"') && html.includes('aria-pressed="false"'),`Motion control missing: ${rel}`);
   assert(html.includes('Content-Security-Policy') && html.includes("connect-src 'none'"),`Static-site CSP missing: ${rel}`);
   assert(html.includes('The Oasis') && !html.includes('RPO HUB'),`Generated route has stale product branding: ${rel}`);
-  assert((html.match(/<script\b/g)||[]).length===1 && /<script src="(?:\.\/|\.\.\/)?app\.js" defer><\/script>/.test(html),`Unexpected or inline script in generated page: ${rel}`);
+  assert((html.match(/<script\b/g)||[]).length===2 && /<script src="(?:\.\/|\.\.\/)?theme-init\.js"><\/script>/.test(html) && /<script src="(?:\.\/|\.\.\/)?app\.js" defer><\/script>/.test(html),`Unexpected scripts or pre-paint theme bootstrap missing: ${rel}`);
+  assert(html.indexOf('theme-init.js') < html.indexOf('styles.css'),`Theme must restore before CSS paints: ${rel}`);
+  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
+  assert(new Set(ids).size===ids.length,`Duplicate SVG/document IDs: ${rel}`);
+  for(const match of html.matchAll(/url\(#([^)]*)\)/g))assert(ids.filter(id=>id===match[1]).length===1,`Broken or ambiguous SVG fragment in ${rel}: ${match[1]}`);
+  const sceneBlocks=[...html.matchAll(/<svg class="([^"]+)" data-scene="([^"]+)"[\s\S]*?<\/svg>/g)];
+  for(const match of sceneBlocks){
+    const className=match[1], sceneId=match[2], block=match[0];
+    const ambientCount=(block.match(/class="ambient\b/g)||[]).length;
+    if(className.includes('world-art')){
+      const max=rel==='index.html'?24:8;
+      assert(ambientCount<=max,`Scene animation budget exceeded: ${rel}/${sceneId}/${ambientCount}`);
+    }else assert(ambientCount===0,`Theme card previews must be static: ${rel}/${sceneId}`);
+  }
+  assert(sceneBlocks.length>=18,`Expected all themes as both scenery and previews: ${rel}`);
+  const sharedBytes=await Promise.all(['styles.css','app.js','theme-init.js','favicon.svg'].map(file=>readFile(path.join(dist,file))));
+  const routeBytes=Buffer.byteLength(html)+sharedBytes.reduce((sum,file)=>sum+file.byteLength,0);
+  assert(routeBytes<=300*1024,`Uncompressed route resource budget exceeded: ${rel} ${routeBytes} bytes`);
   for(const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)){
     const dest=match[1].split(/[?#]/,1)[0];
     if(!dest || /^[a-z][a-z0-9+.-]*:|^\/\//i.test(dest))continue;
@@ -163,4 +202,4 @@ if(!process.env.GITHUB_SHA){
 }
 assert(release.revision===expectedRevision,`Release revision does not match the local/CI source state: expected ${expectedRevision}, got ${release.revision}`);
 if(errors.length){console.error(errors.map(x=>'- '+x).join('\n'));process.exit(1);}
-console.log(`Foundation checks passed: ${files.length} public files, ${roles.length} role mirrors, status/content, scripts, five generated routes, theme/motion controls, local links and curated Pages output.`);
+console.log(`Foundation checks passed: ${files.length} public files, ${roles.length} role mirrors, status/content, scripts, five generated routes, nine registry-driven themes, scene IDs/animation budgets, picker/motion controls, 300 KiB route budgets, local links and curated Pages output.`);
