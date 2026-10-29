@@ -21,8 +21,8 @@ async function travel(page, target) { await page.locator(`[data-world="${target}
 const metrics = page => page.evaluate(() => window.__oasisMetrics());
 async function portalFailures() { return (await readFile(path.join(directory, 'pilot.log'), 'utf8')).trim().split(/\r?\n/).map(JSON.parse).filter(row => row.event === 'command_save_failed').length; }
 async function closeVisitor(page) { await page.locator('#leave').click(); await until(async () => !(await metrics(page)).connected); await page.close(); await until(async () => (await request(host, '/healthz')).data.clients === 1, 12000); }
-async function holdKey(page, key, ms = 280) { await page.keyboard.down(key); await sleep(ms); await page.keyboard.up(key); await sleep(120); }
-async function holdButton(page, selector, ms = 280) { await page.locator(selector).scrollIntoViewIfNeeded(); const box = await page.locator(selector).boundingBox(); await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await sleep(ms); await page.mouse.up(); await sleep(120); }
+async function holdKey(page, key, ms = 280) { await page.bringToFront(); await page.keyboard.down(key); await sleep(ms); await page.keyboard.up(key); await sleep(120); }
+async function holdButton(page, selector, ms = 280) { await page.bringToFront(); await page.locator(selector).scrollIntoViewIfNeeded(); const box = await page.locator(selector).boundingBox(); await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await sleep(ms); await page.mouse.up(); await sleep(120); }
 async function seededPage(worldId, x, z, name = 'Portal Explorer') {
   const { token, profile } = await createProfile(host, name);
   const db = new DatabaseSync(path.join(directory, 'oasis.sqlite'));
@@ -45,10 +45,14 @@ try {
   for (let heading = 0; heading < 3; heading++) {
     for (const [control, sign] of [['d', 1], ['a', -1], ['[data-direction="right"]', 1], ['[data-direction="left"]', -1]]) {
       const before = await metrics(a);
-      if (control.length === 1) await holdKey(a, control); else await holdButton(a, control);
+      await a.bringToFront();
+      if (control.length === 1) await a.keyboard.down(control); else { await a.locator(control).scrollIntoViewIfNeeded(); const box = await a.locator(control).boundingBox(); await a.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await a.mouse.down(); }
+      try { await until(async () => { const current = (await metrics(a)).position; return Math.hypot(current.x - before.position.x, current.z - before.position.z) > 0.6; }, 12000); }
+      finally { if (control.length === 1) await a.keyboard.up(control); else await a.mouse.up(); }
+      await sleep(150);
       const after = await metrics(a);
       const alongRight = (after.position.x - before.position.x) * before.cameraRight[0] + (after.position.z - before.position.z) * before.cameraRight[2];
-      assert.ok(alongRight * sign > 0.4, `${control} must follow camera screen direction at yaw ${before.yaw}`);
+      assert.ok(alongRight * sign > 0.4, `${control} must follow camera screen direction at yaw ${before.yaw}; projection=${alongRight}, sign=${sign}`);
       assert.equal(after.position.y, 0);
     }
     await holdKey(a, 'ArrowRight', 980);
