@@ -83,11 +83,14 @@ try {
   if (captured) {
     await a.locator('#dashboard').waitFor({ state: 'hidden' });
     await until(async () => (await metrics(a)).canvasSize[0] === 1280);
+    await a.evaluate(() => document.dispatchEvent(new MouseEvent('mousemove', { movementY: 100000 })));
+    await until(async () => (await metrics(a)).pitch > 79 * Math.PI / 180);
     const locked = await metrics(a); assert.equal(await a.locator('#dashboard').evaluate(e => e.inert), true);
     assert.ok(Math.abs(locked.renderSize[0] - locked.canvasSize[0]) < 2);
     await a.evaluate(() => document.dispatchEvent(new MouseEvent('mousemove', { movementX: 100, movementY: -100 })));
     await sleep(100); const looked = await metrics(a);
-    assert.ok(looked.yaw > locked.yaw + 0.15); assert.ok(looked.pitch < locked.pitch - 0.15);
+    const mouseYawDelta = looked.yaw - locked.yaw;
+    assert.ok(Math.atan2(Math.sin(mouseYawDelta), Math.cos(mouseYawDelta)) > 0.15); assert.ok(looked.pitch < locked.pitch - 0.15);
     await a.evaluate(() => document.dispatchEvent(new MouseEvent('mousemove', { movementY: 100000 })));
     await sleep(80); assert.ok((await metrics(a)).pitch <= 80 * Math.PI / 180 + 1e-8);
     await a.evaluate(() => document.dispatchEvent(new MouseEvent('mousemove', { movementY: -100000 })));
